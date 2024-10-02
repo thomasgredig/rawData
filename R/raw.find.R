@@ -9,25 +9,19 @@
 #' If no path is provided, then it will search in the current path or if
 #' in interactive mode, will prompt for a path.
 #'
-#' @param projectName short string with the project name, must be part of the filename
-#' @param path path to be search
+#' @param rawBase list generated with raw.init()
 #' @param recursive logical, determines whether path is searched recursively.
 #'
 #' @export
-raw.find <- function(projectName, path = NULL, recursive=TRUE) {
+raw.find <- function(rawBase, recursive=TRUE) {
   # check PATH
-  if (is.null(path)) {
-    if (interactive()) {
-      # prompt for path
-      path <- readline(prompt = "Enter path with RAW data: ")
-    } else {
-      warning("No path provided to search for data files.")
-      path = "."
-    }
+  path = rawBase$rawPaths
+  if (is.null(path) | length(path)==0) {
+    path = .promptPath()
   }
 
   dir(path,
-      pattern = paste0(".*\\D{8}[_-]",projectName,"[_-].*"),
+      pattern = paste0(".*\\D{8}[_-]",rawBase$projectName,"[_-].*"),
       ignore.case = TRUE,
       include.dirs = TRUE,
       full.names = TRUE,
@@ -38,6 +32,16 @@ raw.find <- function(projectName, path = NULL, recursive=TRUE) {
 
 NULL
 # helper functions
+
+.promptPath <- function(str = "Enter path with RAW data: ") {
+  if (interactive()) {
+    # prompt for path
+    path <- readline(prompt = str)
+  } else {
+    warning("Use interactive prompt to get path for prompt: ",str)
+    path = "."
+  }
+}
 
 .getCRC <- function(filename) {
   strtoi( raw.getMD5(filename, 7), base = 16 )
