@@ -15,17 +15,21 @@
 #' @export
 raw.find <- function(rawBase, recursive=TRUE) {
   # check PATH
-  path = rawBase$rawPaths
-  if (is.null(path) | length(path)==0) {
-    path = .promptPath()
+  paths = rawBase$rawPaths
+  if (is.null(paths) | length(paths)==0) {
+    paths = .promptPath()
   }
 
-  dir(path,
-      pattern = paste0(".*\\D{8}[_-]",rawBase$projectName,"[_-].*"),
-      ignore.case = TRUE,
-      include.dirs = TRUE,
-      full.names = TRUE,
-      recursive = recursive)
+  fList = c()
+  for(path in paths) {
+    fList = c(fList, dir(path,
+        pattern = paste0(".*\\D{8}[_-]",rawBase$projectName,"[_-].*"),
+        ignore.case = TRUE,
+        include.dirs = TRUE,
+        full.names = TRUE,
+        recursive = recursive))
+  }
+  fList
 }
 
 

@@ -2,6 +2,9 @@
 #'
 #' @param rawBase list created by raw.init()
 #'
+#' @importFrom DBI dbConnect dbDisconnect
+#' @importFrom nanoAFMr AFM.writeDB
+#'
 #' @export
 raw.initDB <- function(rawBase) {
   # generate filename

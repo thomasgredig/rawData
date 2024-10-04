@@ -5,30 +5,33 @@
 #' Then appends those files to the dataRAW.
 #'
 #' @export
-raw.update <- function(projectName,
-                       path = NULL,
+raw.update <- function(rawBase,
                        dataRAW,
-                       verbose = TRUE) {
-  fList = raw.find(projectName, path)
-  pRAW = .commonPath(fList)
+                       verbose = FALSE) {
+  # find files that could potentially be added to dataRAW
+  projectName = rawBase$projectName
+  paths = rawBase$rawPaths
+  fList = raw.find(rawBase)
 
+  # Quit if no files are found.
   if (length(fList)==0) {
-    cat("No RAW data files are found in that folder;
+    cat("No RAW data files are found in these folders;
         check file naming conventions.")
     return(dataRAW)
   }
 
+  # Start Processing by finding the new ID
+  pRAW = .commonPath(fList)
   if (verbose) cat("Found", length(fList), "files.\n")
-  IDmax <- if (length(dataRAW) == 0) { 7 } else { max(dataRAW$ID)+7 }
+  IDmax <- if (nrow(dataRAW) == 0) { 7 } else { max(dataRAW$ID)+7 }
 
   # check each filename whether it was included already
   for(filename in fList) {
     crc = .getCRC(filename)
     if (crc %in% dataRAW$crc) {
       # check if filename has changed
-
     } else {
-      # add to dataRAW:
+      # add to dataRAW
       dataRAW = rbind(dataRAW, .addFile(filename, IDmax, pRAW))
       IDmax = IDmax + 1
     }
@@ -102,7 +105,7 @@ raw.update <- function(projectName,
     if (grepl('ras[x]*',f)) type = 'XRD'
     if (grepl('ibw',f)) type = 'AFM'
     if (grepl('tiff',f)) type = 'AFM'
-    if (grepl('\\d{3}',f)) type = 'AFM'
+    if (grepl('\\d{3}$',f)) type = 'AFM'
     if (grepl('csv',f)) type = 'table'
   }
 
