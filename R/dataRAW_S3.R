@@ -39,6 +39,8 @@ create_dataRAW <- function(ID,
 
 
 #' row bind two dataRAW sets
+#' @param d1 first dataRAW object
+#' @param d2 second dataRAW object to be appended
 #' @export
 rbind.dataRAW <- function(d1, d2) {
   if (min(d2$ID) <= max(d1$ID)) {
@@ -61,7 +63,7 @@ rbind.dataRAW <- function(d1, d2) {
 #' Print method for the dataRAW class
 #' @param x created with create_dataRAW() function
 #' @param ... additional params
-#' @importFrom pander pander
+#' @importFrom utils head tail
 #' @export
 print.dataRAW <- function(x, ...) {
   print("dataRAW info on",length(x$ID),"files:\n")

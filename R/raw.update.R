@@ -8,12 +8,38 @@
 #'
 #' @export
 raw.update <- function(rawBase,
-                       startID = 7,
-                       recursive = TRUE,
-                       verbose = FALSE) {
+                    dataRAW,
+                    path,
+                    ...) {
+  rawBase$rawPaths = c(rawBase$rawPaths, path)
   # remove duplicate paths,etc.
   rawBase = .cleanRawBase(rawBase)
+  dataRAW = raw.addFiles(rawBase, dataRAW, ...)
 
+  list(rawBase = rawBase,
+       dataRAW = dataRAW)
+}
+
+
+#' Add dataRAW with new files
+#'
+#' @description
+#' Finds files that match the project name and are located in the path.
+#' Then appends those files to the dataRAW; if the file already exists
+#' it will be updated, but not added; the ID remains the same.
+#'
+#' @param rawBase see raw.init() to create this
+#' @param dataRAW a dataRAW S3 object
+#' @param recursive logical to search paths recursively or not
+#' @param verbose logical to output more information
+#'
+#' @returns dataRAW table
+#'
+#' @export
+raw.addFiles <- function(rawBase,
+                       dataRAW = NULL,
+                       recursive = TRUE,
+                       verbose = FALSE) {
   # find files that could potentially be added to dataRAW
   fList = raw.find(rawBase, recursive=recursive)
 
@@ -27,13 +53,37 @@ raw.update <- function(rawBase,
   # Start Processing by finding the new ID
   pRAW = .commonPath(fList)
   if (verbose) cat("Found", length(fList), "files.\n")
+  if (is.null(dataRAW)) {
+    startID = 7
+  } else {
+    startID = max(dataRAW$ID) + 1
+    dataRAW$missing = rep(TRUE, length(dataRAW$ID))
+  }
 
-  # add each filename
+  # add each file name
   for(filename in fList) {
     new_dataRAW = create_dataRAW(startID, pRAW, filename)
-    if (exists("dataRAW")) { dataRAW = rbind(dataRAW, new_dataRAW) } else { dataRAW = new_dataRAW }
-    startID = startID + 1
-
+    if (!is.null(dataRAW)) {
+      # check if CRC is different
+      noFile = which(dataRAW$crc==new_dataRAW$crc)
+      if (length(noFile)>0) {
+        # file is already in CRC
+        # check if path and file name need to be updated
+        dataRAW$filename[noFile] = new_dataRAW$filename
+        dataRAW$path[noFile] = new_dataRAW$path
+        dataRAW$sample[noFile] = new_dataRAW$sample
+        dataRAW$type[noFile] = new_dataRAW$type
+        dataRAW$missing[noFile] = FALSE
+      } else {
+        # brand new file
+        dataRAW = rbind(dataRAW, new_dataRAW)
+        startID = startID + 1
+      }
+    } else {
+      # first file in dataRAW
+      dataRAW = new_dataRAW
+      startID = startID + 1
+    }
   }
 
   return(dataRAW)
@@ -44,25 +94,6 @@ raw.update <- function(rawBase,
   strtoi( raw.getMD5(filename, 7), base = 16 )
 }
 
-
-.addFile <- function(f, ID, pRAW) {
-  r = data.frame(
-    ID = ID,
-    path = .truncatePath(pRAW, dirname(f)),
-    filename = basename(f),
-    crc = .getCRC(f),
-    size = file.info(f)$size,
-    type = .getFileType(f),
-    missing = !file.exists(f),
-    altered = FALSE,
-    sample = "",
-    date = format(file.info(f)$atime),
-    meta = ""
-  )
-  if (is.na(r$crc)) stop("Cannot generate MD5 check sum for file:",f)
-
-  r
-}
 
 .truncatePath <- function(pRAW, pfad) {
   pRAW = gsub("\\\\","/",pRAW)
@@ -84,7 +115,8 @@ raw.update <- function(rawBase,
   return(substr(str1, 1, min_length))
 }
 
-# returns file type
+#' Returns File Type
+#' @importFrom tools file_ext
 .getFileType <- function(filename) {
   type = ""
   f = basename(filename)
@@ -101,11 +133,12 @@ raw.update <- function(rawBase,
   if (type=="") {
     f = tools::file_ext(filename)
     if (grepl('nid',f)) type = 'AFM'
-    if (grepl('ras[x]*',f)) type = 'XRD'
+    if (grepl('ras[x]',f)) type = 'XRD'
     if (grepl('ibw',f)) type = 'AFM'
     if (grepl('tiff',f)) type = 'AFM'
-    if (grepl('\\d{3}$',f)) type = 'AFM'
+    if (grepl('\\d{3}',f)) type = 'AFM'
     if (grepl('csv',f)) type = 'table'
+    if (grepl('txt',f)) type = 'text'
   }
 
   type

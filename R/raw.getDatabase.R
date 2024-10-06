@@ -16,8 +16,7 @@
 #' When called with the `pkgname`, the function uses the version to generate the
 #' database filename and return its path.
 #'
-#' @param pkgname name of the R data package
-#' @param dbPath path
+#' @param rawBase rawBase from raw.init()
 #' @param verbose logical, additional information
 #'
 #' @importFrom utils packageVersion

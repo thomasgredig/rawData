@@ -12,19 +12,21 @@
 #' @param projectName short string with the project name "spinPc"
 #' @param paths path or paths with data files
 #' @param sqlPaths paths for location of SQL database
+#' @param ... parameters for raw.addFiles, such as verbose
+#'
+#' @importFrom here here
 #'
 #' @export
-raw.init <- function(projectName, paths = NA, sqlPaths = NA, recursive=TRUE) {
+raw.init <- function(projectName, paths = NA, sqlPaths = NA, recursive=TRUE, ...) {
 
   # initialize rawBase
   # ==================
   # get current package name
-  description <- desc::desc(file = "DESCRIPTION")
-  pkgName <- description$get("Package")
+  pkgName <- basename(here::here())
   rawBase = raw.rawBase(projectName, pkgName, paths, sqlPaths)
 
   # look for files and add them to the dataRAW
-  dataRAW = raw.update(rawBase, recursive=recursive)
+  dataRAW = raw.addFiles(rawBase, recursive=recursive, ...)
 
   list(
     rawBase = rawBase,

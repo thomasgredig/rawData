@@ -38,3 +38,10 @@ d <- raw.update(rawBase, dataRAW, path=tmpDir)
 dataRAW = d$dataRAW
 rawBase = d$rawBase
 ```
+
+
+## Package
+
+Run `covr::report()` to create a coverage report: 50.7%
+
+Run `pkgdown::build_site()` to create the documentation.

@@ -2,6 +2,7 @@
 .Rhistory
 .RData
 .Ruserdata
-_main.R
+_*.R
+
 /man
 /docs
