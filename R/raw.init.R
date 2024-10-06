@@ -10,25 +10,23 @@
 #' project and also a path to store the SQL data.
 #'
 #' @param projectName short string with the project name "spinPc"
-#' @param pkgName name of the data package, such as "dataSanchez"
+#' @param paths path or paths with data files
+#' @param sqlPaths paths for location of SQL database
 #'
 #' @export
-raw.init <- function(projectName, pkgName) {
-  projLen = nchar(projectName)
-  if (projLen<=2 | projLen>=10) {
-    warning("projectName of RAW data appears incorrect in size.")
-  }
+raw.init <- function(projectName, paths = NA, sqlPaths = NA, recursive=TRUE) {
 
-  # prompt for data and SQL path
-  path = .promptPath("Enter path: ")
-  if (!dir.exists(path)) { warning("Path not found."); path = "." }
-  pathSQL = .promptPath("Enter path for SQL repository: ")
-  if (!dir.exists(pathSQL)) { warning("Path not found."); pathSQL = "." }
+  # initialize rawBase
+  # ==================
+  # get current package name
+  description <- desc::desc(file = "DESCRIPTION")
+  pkgName <- description$get("Package")
+  rawBase = raw.rawBase(projectName, pkgName, paths, sqlPaths)
 
-  list(versionRAW = packageVersion("rawData"),
-       pkgName = pkgName,
-       rawPaths = c(path),
-       sqlPaths = c(pathSQL),
-       projectName = projectName
-  )
+  # look for files and add them to the dataRAW
+  dataRAW = raw.update(rawBase, recursive=recursive)
+
+  list(
+    rawBase = rawBase,
+    dataRAW = dataRAW)
 }

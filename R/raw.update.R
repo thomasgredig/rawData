@@ -4,37 +4,36 @@
 #' Finds files that match the project name and are located in the path.
 #' Then appends those files to the dataRAW.
 #'
+#' @returns dataRAW table
+#'
 #' @export
 raw.update <- function(rawBase,
-                       dataRAW,
+                       startID = 7,
+                       recursive = TRUE,
                        verbose = FALSE) {
+  # remove duplicate paths,etc.
+  rawBase = .cleanRawBase(rawBase)
+
   # find files that could potentially be added to dataRAW
-  projectName = rawBase$projectName
-  paths = rawBase$rawPaths
-  fList = raw.find(rawBase)
+  fList = raw.find(rawBase, recursive=recursive)
 
   # Quit if no files are found.
   if (length(fList)==0) {
     cat("No RAW data files are found in these folders;
         check file naming conventions.")
-    return(dataRAW)
+    return(NULL)
   }
 
   # Start Processing by finding the new ID
   pRAW = .commonPath(fList)
   if (verbose) cat("Found", length(fList), "files.\n")
-  IDmax <- if (nrow(dataRAW) == 0) { 7 } else { max(dataRAW$ID)+7 }
 
-  # check each filename whether it was included already
+  # add each filename
   for(filename in fList) {
-    crc = .getCRC(filename)
-    if (crc %in% dataRAW$crc) {
-      # check if filename has changed
-    } else {
-      # add to dataRAW
-      dataRAW = rbind(dataRAW, .addFile(filename, IDmax, pRAW))
-      IDmax = IDmax + 1
-    }
+    new_dataRAW = create_dataRAW(startID, pRAW, filename)
+    if (exists("dataRAW")) { dataRAW = rbind(dataRAW, new_dataRAW) } else { dataRAW = new_dataRAW }
+    startID = startID + 1
+
   }
 
   return(dataRAW)

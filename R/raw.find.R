@@ -1,16 +1,18 @@
 #' Find project files
 #'
 #' @description
-#' Searches a path for project files, you need to provide a projectName,
-#' such as "spinPc" or another short string that must be included in the
-#' filename. Filenames must have a specific format to be found. Search is
-#' done recursively.
+#' Uses the rawBase list to include instructions on how to search files.
+#' Searches files that contain an 8 digit date followed by underscore or dash
+#' and includes the project name, something like 20240822_something_ProjName_something
+#'
 #'
 #' If no path is provided, then it will search in the current path or if
 #' in interactive mode, will prompt for a path.
 #'
 #' @param rawBase list generated with raw.init()
 #' @param recursive logical, determines whether path is searched recursively.
+#'
+#' @returns vector with file list that includes paths
 #'
 #' @export
 raw.find <- function(rawBase, recursive=TRUE) {
@@ -20,10 +22,19 @@ raw.find <- function(rawBase, recursive=TRUE) {
     paths = .promptPath()
   }
 
+  # check project Name
+  projectName = rawBase$projectName
+  if (is.null(rawBase$projectName)) {
+    projectName = .promptPath("Enter name of project: ")
+  }
+
+  nLen = nchar(projectName)
+  if ((nLen<=2) | (nLen>12)) { warning("ProjectName may be too short or too long: '", projectName,"'") }
+
   fList = c()
   for(path in paths) {
     fList = c(fList, dir(path,
-        pattern = paste0(".*\\D{8}[_-]",rawBase$projectName,"[_-].*"),
+        pattern = paste0(".*20\\d{6}[_-]",projectName,"[_-].*"),
         ignore.case = TRUE,
         include.dirs = TRUE,
         full.names = TRUE,
