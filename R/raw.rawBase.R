@@ -33,6 +33,7 @@ raw.rawBase <- function(projectName, pkgName = "dataSpin", paths = NA, sqlPaths 
 
   list(versionRAW = packageVersion("rawData"),
        pkgName = pkgName,
+       token = floor(runif(1,1000,1000*1000)),  # random token for DB identification
        rawPaths = c(paths),
        sqlPaths = c(sqlPaths),
        projectName = projectName

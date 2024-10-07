@@ -18,7 +18,6 @@
 #'
 #' @export
 raw.init <- function(projectName, paths = NA, sqlPaths = NA, recursive=TRUE, ...) {
-
   # initialize rawBase
   # ==================
   # get current package name
@@ -27,6 +26,9 @@ raw.init <- function(projectName, paths = NA, sqlPaths = NA, recursive=TRUE, ...
 
   # look for files and add them to the dataRAW
   dataRAW = raw.addFiles(rawBase, recursive=recursive, ...)
+
+  # create the SQL database
+  raw.initDB(rawBase)
 
   list(
     rawBase = rawBase,

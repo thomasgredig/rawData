@@ -12,14 +12,18 @@ create_dataRAW <- function(ID,
                            date = NULL,
                            meta=NULL) {
   nLen = length(ID)
+  f = path_filename
   # do some checks
   if (is.null(meta)) {
     meta <- rep("", nLen)
   }
+
+  # strip out common path pRAW
+  fPath = gsub(pRAW,"",dirname(f))
+
   # Create a data.frame
-  f = path_filename
   df = data.frame(ID,
-                  path = dirname(f),
+                  path = fPath,
                   filename = basename(f),
                   crc = .getCRC(f),
                   size = file.info(f)$size,

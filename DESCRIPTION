@@ -20,7 +20,7 @@ Config/testthat/edition: 3
 Imports:
   DBI,
   here,
-  nanoAFMr,
+  RSQLite,
   stats,
   tools,
   utils
