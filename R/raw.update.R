@@ -86,6 +86,12 @@ raw.addFiles <- function(rawBase,
     }
   }
 
+  if (!is.null(attr(dataRAW, "pRAW"))) {
+    attr(dataRAW, "pRAW") <- c(attr(dataRAW, "pRAW"),pRAW)
+  } else {
+    attr(dataRAW, "pRAW") <- pRAW
+  }
+
   return(dataRAW)
 }
 

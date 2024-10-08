@@ -53,6 +53,6 @@ Each update to the dataRAW table creates a new token in rawBase; this token shou
 
 ## Package
 
-Run `covr::report()` to create a coverage report: 50.7%
+Run `covr::report()` to create a coverage report: **70.34%**
 
 Run `pkgdown::build_site()` to create the documentation.

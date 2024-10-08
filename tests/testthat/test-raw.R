@@ -5,5 +5,6 @@ test_that("find raw files", {
 
   s <- raw.find(rawBase)
   expect_true(length(s) >= 2)
+
 })
 

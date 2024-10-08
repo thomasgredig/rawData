@@ -4,10 +4,16 @@ test_that("check dataRAW update", {
   tmpDir = get_test_RAW_folder(10, projectName)
 
   # check INITIALIZATION
-  d <- raw.init(projectName, paths=tmpDir, sqlPaths=tmpDir, recursive=FALSE)
+  d <- raw.init(projectName, paths=tmpDir, sqlPaths=tmpDir, recursive=FALSE, verbose=FALSE)
   dataRAW = d$dataRAW
   rawBase = d$rawBase
   expect_equal(dataRAW$ID, 7:16)
+
+  # check data type
+  rawType = raw.getType(dataRAW, 7)
+  expect_equal(rawType, "text")
+  filename = raw.getFilename(dataRAW, 7)
+  expect_true(file.exists(filename))
 
   # check ADDING files
   tmpDir = get_test_RAW_folder(2, projectName)

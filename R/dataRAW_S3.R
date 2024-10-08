@@ -69,12 +69,8 @@ rbind.dataRAW <- function(d1, d2) {
 #' @param ... additional params
 #' @importFrom utils head tail
 #' @export
-print.dataRAW <- function(x, ...) {
-  print("dataRAW info on",length(x$ID),"files:\n")
-  df = data.frame(x$ID, x$filename, x$size, x$type, x$sample)
-  print(head(df,...))
-  if (nrow(df)>10) {
-    print("...\n")
-    print(tail(df,...))
-  }
+print.dataRAW <- function(RAW, row.names = FALSE, ...) {
+  print(paste("dataRAW info on",length(RAW$ID),"files:"))
+  df = data.frame(RAW$ID, RAW$filename, RAW$size, RAW$type, RAW$sample)
+  print(df, row.names = row.names, ...)
 }

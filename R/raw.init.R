@@ -28,7 +28,7 @@ raw.init <- function(projectName, paths = NA, sqlPaths = NA, recursive=TRUE, ...
   dataRAW = raw.addFiles(rawBase, recursive=recursive, ...)
 
   # create the SQL database
-  raw.initDB(rawBase)
+  raw.initDB(rawBase, ...)
 
   list(
     rawBase = rawBase,
