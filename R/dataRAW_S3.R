@@ -18,6 +18,15 @@ create_dataRAW <- function(ID,
     meta <- rep("", nLen)
   }
 
+  if(is.null(crc)) {crc = .getCRC(f) }
+  if(is.null(size)) { size = file.info(f)$size }
+  if(is.null(type)) { type = .getFileType(f) }
+  if(is.null(missing)) { missing = !file.exists(f) }
+  if(is.null(altered)) { altered = rep(FALSE,nLen) }
+  if(is.null(sample)) { sample = rep("",nLen) }
+  if(is.null(date)) { date = format(file.info(f)$atime) }
+  if(is.null(meta)) { meta = rep("",nLen) }
+
   # strip out common path pRAW
   fPath = gsub(pRAW,"",dirname(f))
 
@@ -25,14 +34,14 @@ create_dataRAW <- function(ID,
   df = data.frame(ID,
                   path = fPath,
                   filename = basename(f),
-                  crc = .getCRC(f),
-                  size = file.info(f)$size,
-                  type = .getFileType(f),
-                  missing = !file.exists(f),
-                  altered = rep(FALSE,nLen),
-                  sample = rep("",nLen),
-                  date = format(file.info(f)$atime),
-                  meta = rep("",nLen)
+                  crc = crc,
+                  size = size,
+                  type = type,
+                  missing = missing,
+                  altered = altered,
+                  sample = sample,
+                  date = date,
+                  meta = meta
   )
 
   # Assign the class attribute
