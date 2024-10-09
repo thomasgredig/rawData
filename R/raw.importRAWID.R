@@ -1,10 +1,15 @@
 #' Imports legacy RAW-ID.csv
 #'
+#' @param filename_RAWID filename and path for RAW-ID.csv file in data-raw folder
+#'
 #' @export
 raw.importRAWID <- function(filename_RAWID) {
+  p = ""
+  dataRAW = NULL
+
   # read the header information
   df_header <- raw.readRAWIDheader(filename_RAWID)
-  p = ""
+
   for(p in df_header$paths) {
     if(dir.exists(p)) pRAW = p
   }
@@ -15,7 +20,7 @@ raw.importRAWID <- function(filename_RAWID) {
   for(i in 1:nrow(df_raw)) {
     df = df_raw[i,]
     # cat("ID",df$ID," .. ")
-    filename = file.path(df$path, df$filename)
+    filename = file.path(pRAW, df$path, df$filename)
     create_dataRAW(df$ID,
                    pRAW,
                    filename,
@@ -27,7 +32,7 @@ raw.importRAWID <- function(filename_RAWID) {
                    sample = df$sample,
                    df$date,
                    df$meta)  -> dRaw
-    if(exists("dataRAW")) { dataRAW = rbind(dataRAW, dRaw) } else {dataRAW = dRaw }
+    if(!is.null(dataRAW)) { dataRAW = rbind(dataRAW, dRaw) } else {dataRAW = dRaw }
   }
   dataRAW
 }

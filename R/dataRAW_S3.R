@@ -74,7 +74,7 @@ rbind.dataRAW <- function(d1, d2) {
 }
 
 #' Print method for the dataRAW class
-#' @param x created with create_dataRAW() function
+#' @param RAW created with create_dataRAW() function
 #' @param ... additional params
 #' @importFrom utils head tail
 #' @export
