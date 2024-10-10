@@ -8,7 +8,7 @@
 #' raw.getMD5(raw.getSampleFiles(),num=10)
 #'
 #' @export
-raw.getMD5 <- function(filename,num=6) {
+raw.getMD5 <- function(filename, num=6) {
   fdel=c()
   for(c in 1:length(filename)) {
     if (!file.exists(filename[c])) { fdel=c(fdel,c) }

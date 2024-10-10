@@ -1,8 +1,7 @@
 #' Constructor of dataRAW S3 class
 #' @export
 create_dataRAW <- function(ID,
-                           pRAW,
-                           path_filename,
+                           filename,
                            crc = NULL,
                            size = NULL,
                            type = NULL,
@@ -11,43 +10,54 @@ create_dataRAW <- function(ID,
                            sample = NULL,
                            date = NULL,
                            meta=NULL) {
-  nLen = length(ID)
-  f = path_filename
-  # do some checks
-  if (is.null(meta)) {
-    meta <- rep("", nLen)
+  nLen = length(filename)  # number of files to add
+  # assert that length of IDs and filenames are the same
+  if(length(ID) != nLen) {
+    # extend IDs or crop IDs
+    if (length(ID) < nLen) {
+      ID = c(ID, seq(max(ID)+1, max(ID)+nLen-length(ID) ))
+    } else {
+      ID = ID[1:nLen]
+    }
   }
 
-  if(is.null(crc)) {crc = .getCRC(f) }
-  if(is.null(size)) { size = file.info(f)$size }
-  if(is.null(type)) { type = .getFileType(f) }
-  if(is.null(missing)) { missing = !file.exists(f) }
+  if(is.null(crc)) {crc = .getCRC(filename) }
+  if(is.null(size)) { size = file.info(filename)$size }
+  if(is.null(type)) { type = sapply(filename, .getFileType) }
+  if(is.null(missing)) { missing = !file.exists(filename) }
   if(is.null(altered)) { altered = rep(FALSE,nLen) }
-  if(is.null(sample)) { sample = rep("",nLen) }
-  if(is.null(date)) { date = format(file.info(f)$atime) }
+  if(is.null(sample)) { sample = sapply(basename(filename), .getSampleName) }
+  if(is.null(date)) { date = format(file.info(filename)$atime) }
   if(is.null(meta)) { meta = rep("",nLen) }
 
   # strip out common path pRAW
-  fPath = gsub(pRAW,"",dirname(f))
+  pRAW = .commonPath(filename)
+  fPath = gsub(pRAW,"",dirname(filename))
 
-  # Create a data.frame
-  df = data.frame(ID,
-                  path = fPath,
-                  filename = basename(f),
-                  crc = crc,
-                  size = size,
-                  type = type,
-                  missing = missing,
-                  altered = altered,
-                  sample = sample,
-                  date = date,
-                  meta = meta
+  # create basic dataframe
+  df = data.frame(
+    ID = ID,
+    path = fPath,
+    filename = basename(filename),
+    crc = crc,
+    size = size,
+    type = type,
+    missing = missing,
+    altered = altered,
+    sample = sample,
+    date = date,
+    meta = meta
+  )
+
+  dataRAW <- list(
+    df = df,
+    pRAW = pRAW
   )
 
   # Assign the class attribute
-  class(df) <- "dataRAW"
+  class(dataRAW) <- "dataRAW"
 
-  return(df)
+  return(dataRAW)
 }
 
 
@@ -56,19 +66,17 @@ create_dataRAW <- function(ID,
 #' @param d2 second dataRAW object to be appended
 #' @export
 rbind.dataRAW <- function(d1, d2) {
-  if (min(d2$ID) <= max(d1$ID)) {
+  if (min(d2$df$ID) <= max(d1$df$ID)) {
     # IDs in d2 are too low and overlap; move IDs up
-    d2$ID = d2$ID + (min(d2$ID) - max(d1$ID) + 7)
-    warning("IDs are shifted to row bind dataRAW.")
+    d2$df$ID = d2$df$ID + (min(d2$df$ID) - max(d1$df$ID) + 7)
   }
 
-
-  # Get the names of all variables in both lists
-  all_names <- unique(c(names(d1), names(d2)))
-  # Loop through each variable name
-  for (name in all_names) {
-    d1[[name]] <- c(d1[[name]], d2[[name]])
-  }
+  df1 = d1$df
+  df2 = d2$df
+  m <- which(df2$crc %in% df1$crc)
+  df2 <- df2[-m,]
+  d1$df = rbind(df1,df2)
+  d1$pRAW = c(d1$pRAW, d2$pRAW)
 
   d1
 }

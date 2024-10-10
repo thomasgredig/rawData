@@ -7,7 +7,7 @@ test_that("check dataRAW update", {
   d <- raw.init(projectName, paths=tmpDir, sqlPaths=tmpDir, recursive=FALSE, verbose=FALSE)
   dataRAW = d$dataRAW
   rawBase = d$rawBase
-  expect_equal(dataRAW$ID, 7:16)
+  expect_equal(dataRAW$df$ID, 7:16)
 
   # check data type
   rawType = raw.getType(dataRAW, 7)
@@ -20,7 +20,7 @@ test_that("check dataRAW update", {
   d <- raw.update(rawBase, dataRAW, path=tmpDir)
   dataRAW = d$dataRAW
   rawBase = d$rawBase
-  expect_equal(dataRAW$ID, 7:18)
+  expect_equal(dataRAW$df$ID, 7:18)
 
   # check DELETING FILES
   # 2 files should appear now as missing
@@ -31,8 +31,8 @@ test_that("check dataRAW update", {
   d <- raw.update(rawBase, dataRAW, path=tmpDir)
   dataRAW = d$dataRAW
   rawBase = d$rawBase
-  expect_equal(dataRAW$ID, 7:18)
-  expect_equal(length(which(dataRAW$missing==TRUE)),2)
+  expect_equal(dataRAW$df$ID, 7:18)
+  expect_equal(length(which(dataRAW$df$missing==TRUE)),2)
 
   # RENAME a file
   file_rename = dir(tmpDir, pattern=projectName, full.names=TRUE)[5]
@@ -40,7 +40,7 @@ test_that("check dataRAW update", {
   d <- raw.update(rawBase, dataRAW, path=tmpDir)
   dataRAW = d$dataRAW
   rawBase = d$rawBase
-  expect_equal(dataRAW$ID, 7:18)
+  expect_equal(dataRAW$df$ID, 7:18)
 
   # MOVE file to different folder
   newFolder = file.path(tmpDir,"RAW")
@@ -51,5 +51,5 @@ test_that("check dataRAW update", {
   d <- raw.update(rawBase, dataRAW, path=newFolder)
   dataRAW = d$dataRAW
   rawBase = d$rawBase
-  expect_equal(dataRAW$ID, 7:18)
+  expect_equal(dataRAW$df$ID, 7:18)
 })

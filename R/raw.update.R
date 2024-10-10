@@ -56,35 +56,38 @@ raw.addFiles <- function(rawBase,
   if (is.null(dataRAW)) {
     startID = 7
   } else {
-    startID = max(dataRAW$ID) + 1
-    dataRAW$missing = rep(TRUE, length(dataRAW$ID))
+    startID = max(dataRAW$df$ID) + 1
+    dataRAW$df$missing = rep(TRUE, length(dataRAW$df$ID))
   }
 
-  # add each file name
-  for(filename in fList) {
-    new_dataRAW = create_dataRAW(startID, pRAW, filename)
-    if (!is.null(dataRAW)) {
-      # check if CRC is different
-      noFile = which(dataRAW$crc==new_dataRAW$crc)
-      if (length(noFile)>0) {
-        # file is already in CRC
-        # check if path and file name need to be updated
-        dataRAW$filename[noFile] = new_dataRAW$filename
-        dataRAW$path[noFile] = new_dataRAW$path
-        dataRAW$sample[noFile] = new_dataRAW$sample
-        dataRAW$type[noFile] = new_dataRAW$type
-        dataRAW$missing[noFile] = FALSE
-      } else {
-        # brand new file
-        dataRAW = rbind(dataRAW, new_dataRAW)
-        startID = startID + 1
-      }
-    } else {
-      # first file in dataRAW
-      dataRAW = new_dataRAW
-      startID = startID + 1
-    }
-  }
+  new_dataRAW = create_dataRAW(startID, fList)
+  if (is.null(dataRAW)) { dataRAW = new_dataRAW } else { dataRAW = rbind(dataRAW, new_dataRAW) }
+
+  # # add each file name
+  # for(filename in fList) {
+  #   new_dataRAW = create_dataRAW(startID, pRAW, filename)
+  #   if (!is.null(dataRAW)) {
+  #     # check if CRC is different
+  #     noFile = which(dataRAW$crc==new_dataRAW$crc)
+  #     if (length(noFile)>0) {
+  #       # file is already in CRC
+  #       # check if path and file name need to be updated
+  #       dataRAW$filename[noFile] = new_dataRAW$filename
+  #       dataRAW$path[noFile] = new_dataRAW$path
+  #       dataRAW$sample[noFile] = new_dataRAW$sample
+  #       dataRAW$type[noFile] = new_dataRAW$type
+  #       dataRAW$missing[noFile] = FALSE
+  #     } else {
+  #       # brand new file
+  #       dataRAW = rbind(dataRAW, new_dataRAW)
+  #       startID = startID + 1
+  #     }
+  #   } else {
+  #     # first file in dataRAW
+  #     dataRAW = new_dataRAW
+  #     startID = startID + 1
+  #   }
+  # }
 
   if (!is.null(attr(dataRAW, "pRAW"))) {
     attr(dataRAW, "pRAW") <- c(attr(dataRAW, "pRAW"),pRAW)
@@ -97,7 +100,7 @@ raw.addFiles <- function(rawBase,
 
 
 .getCRC <- function(filename) {
-  strtoi( raw.getMD5(filename, 7), base = 16 )
+  strtoi( substr(md5sum(filename),1,7), base = 16 )
 }
 
 
@@ -120,6 +123,18 @@ raw.addFiles <- function(rawBase,
   }
   return(substr(str1, 1, min_length))
 }
+
+# 20230208_CuPcAnnealing_RM_AFM_RM20230125Si11_Post_06b.ibw
+.getSampleName <- function(filename) {
+  # Use a regular expression to match the pattern RM followed by digits and letters
+  # pattern <- "[_-][A-Za-z]+\\d{8}[A-Za-z0-9]+[_-]"
+  # match <- regmatches(filename, regexpr(pattern, filename))
+  # return(match)
+  gsub(".*_.*_.*_.*_([A-Za-z0-9]+)_.*","\\1", filename)
+}
+
+
+
 
 #' Returns File Type
 #' @importFrom tools file_ext

@@ -4,10 +4,10 @@
 #' @returns full path of filename, if not founds returns empty NA
 #' @export
 raw.getFilename <- function(dataRAW, ID) {
-  m = which(dataRAW$ID == ID)
+  m = which(dataRAW$df$ID == ID)
   filename = NA
   if(length(m)==1) {
-    filename = file.path(dataRAW$path[m], dataRAW$filename[m])
+    filename = file.path(dataRAW$df$path[m], dataRAW$df$filename[m])
     # search for local master path using rawBase information
     # could be saved on different folders on different storage
     # systems

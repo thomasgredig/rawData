@@ -1,3 +1,8 @@
+# rawData 0.2.0
+
+* use a dataframe within the dataRAW S3 class
+* store paths properly within the S3 class
+
 # rawData 0.1.1
 
 * Support legacy RAW-ID.csv files with IDs

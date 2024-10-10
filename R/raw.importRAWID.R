@@ -15,25 +15,18 @@ raw.importRAWID <- function(filename_RAWID) {
   }
 
   # read all the data
-  df_raw = read.csv(filename_RAWID, comment.char = "#")
+  df = read.csv(filename_RAWID, comment.char = "#")
+  create_dataRAW(df$ID,
+                 file.path(pRAW, filename),
+                 crc = df$crc,
+                 size = df$size,
+                 type = df$type,
+                 df$missing,
+                 df$altered,
+                 sample = df$sample,
+                 df$date,
+                 df$meta)  -> dRaw
 
-  for(i in 1:nrow(df_raw)) {
-    df = df_raw[i,]
-    # cat("ID",df$ID," .. ")
-    filename = file.path(pRAW, df$path, df$filename)
-    create_dataRAW(df$ID,
-                   pRAW,
-                   filename,
-                   crc = df$crc,
-                   size = df$size,
-                   type = df$type,
-                   df$missing,
-                   df$altered,
-                   sample = df$sample,
-                   df$date,
-                   df$meta)  -> dRaw
-    if(!is.null(dataRAW)) { dataRAW = rbind(dataRAW, dRaw) } else {dataRAW = dRaw }
-  }
   dataRAW
 }
 
