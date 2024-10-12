@@ -4,14 +4,15 @@
 #' @returns dataRAW object with updated missing fields
 #'
 #' @export
-raw.checkMissing <- function(dataRAW) {
-  IDs = dataRAW$ID
+raw.checkMissing <- function(d) {
+  IDs = d$df$ID
   for(ID in IDs) {
-    m <- which(ID %in% dataRAW$ID)
-    filename = raw.getFilename(dataRAW,ID)
+    m <- which(ID == IDs)
+    filename = raw.getFilename(d,ID)
     missing = !file.exists(filename)
-    dataRAW$missing[m] = missing
+    d$df$missing[m] = missing
+    # print(paste(ID,"=",missing))
   }
 
-  dataRAW
+  d
 }

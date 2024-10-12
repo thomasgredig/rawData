@@ -75,6 +75,9 @@ rbind.dataRAW <- function(d1, d2) {
   df2 = d2$df
   m <- which(df2$crc %in% df1$crc)
   df2 <- df2[-m,]
+  if (nrow(df2)==0) return(d1)
+  next_ID = max(df1$ID)
+  df2$ID = 1:nrow(df2) + next_ID
   d1$df = rbind(df1,df2)
   d1$pRAW = c(d1$pRAW, d2$pRAW)
 

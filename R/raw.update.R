@@ -15,6 +15,7 @@ raw.update <- function(rawBase,
   # remove duplicate paths,etc.
   rawBase = .cleanRawBase(rawBase)
   dataRAW = raw.addFiles(rawBase, dataRAW, ...)
+  dataRAW = raw.checkMissing(dataRAW)
 
   list(rawBase = rawBase,
        dataRAW = dataRAW)
