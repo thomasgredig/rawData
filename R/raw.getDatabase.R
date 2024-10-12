@@ -16,7 +16,7 @@
 #' When called with the `pkgname`, the function uses the version to generate the
 #' database filename and return its path.
 #'
-#' @param rawBase rawBase from raw.init()
+#' @param rawBase rawBase object
 #' @param verbose logical, additional information
 #'
 #' @importFrom utils packageVersion
@@ -25,19 +25,20 @@
 #'
 #' @export
 raw.getDatabase <- function(rawBase, verbose = FALSE) {
-  dbFolderListFile <- rawBase$sqlPaths
+  if (!is(rawBase, "rawBase")) stop("rawBase object required.")
+  dbFolderListFile <- rawBase$sql_paths
   dbFile <- NULL
 
-  if (!nzchar(system.file(package = rawBase$pkgName))) {
-    if (verbose) cat("Package", rawBase$pkgName,"not installed.")
+  if (!nzchar(system.file(package = rawBase$package_name))) {
+    if (verbose) cat("Package", rawBase$package_name,"not installed.")
     return (NULL)
   }
-  dbFileName = .getSQLdbName(rawBase$pkgName)
+  dbFileName = .getDatabaseFileName(rawBase$package_name)
   if (verbose) cat("SQL Database filename:", dbFileName,"\n")
 
   # not all search paths might exists, so check which exists
   dbSearchPaths = c()
-  for(dbFolder in rawBase$sqlPaths) {
+  for(dbFolder in rawBase$sql_paths) {
     if (verbose) cat("Searching folder:", dbFolder,"\n")
     if (dir.exists(dbFolder)) dbSearchPaths = c(dbSearchPaths, dbFolder)
   }
@@ -52,7 +53,7 @@ raw.getDatabase <- function(rawBase, verbose = FALSE) {
   for(pfad in dbSearchPaths) {
     dbFileCheck <- file.path(pfad,dbFileName)
     if (file.exists(dbFileCheck)) { dbFile <- dbFileCheck } else {
-      dbFileNameAlternative = dir(pfad, pattern=paste0(rawBase$pkgName,'.*sqlite$'))
+      dbFileNameAlternative = dir(pfad, pattern=paste0(rawBase$package_name,'.*sqlite$'))
       if (length(dbFileNameAlternative)>0) dbFile <- file.path(pfad, dbFileNameAlternative[1])
     }
   }
@@ -64,8 +65,23 @@ raw.getDatabase <- function(rawBase, verbose = FALSE) {
   dbFile
 }
 
+# Helper functions
+NULL
 
-.getSQLdbName <- function(pkgName) {
+.getDatabaseName <- function(rawBase) {
+  if (!is(rawBase, "rawBase")) stop("rawBase object required.")
+  sqlPath = "."
+  sqlFile = .getDatabaseFileName(rawBase$package_name)
+  for(p in rawBase$sql_paths) {
+    if (file.exists(file.path(p,sqlFile))) {
+      sqlPath = p
+      break
+    }
+  }
+  file.path(p, sqlFile)
+}
+
+.getDatabaseFileName <- function(pkgName) {
   pkgVersion = as.character(packageVersion(pkgName))
   paste0(pkgName,"-",pkgVersion,".sqlite")
 }

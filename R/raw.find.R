@@ -16,20 +16,10 @@
 #'
 #' @export
 raw.find <- function(rawBase, recursive=TRUE) {
-  # check PATH
-  paths = rawBase$rawPaths
-  if (is.null(paths) | length(paths)==0) {
-    paths = .promptPath()
-  }
+  if (!is(rawBase,"rawBase")) stop("rawBase object required.")
 
-  # check project Name
-  projectName = rawBase$projectName
-  if (is.null(rawBase$projectName)) {
-    projectName = .promptPath("Enter name of project: ")
-  }
-
-  nLen = nchar(projectName)
-  if ((nLen<=2) | (nLen>12)) { warning("ProjectName may be too short or too long: '", projectName,"'") }
+  paths = rawBase$raw_paths
+  projectName = rawBase$project_name
 
   fList = c()
   for(path in paths) {

@@ -1,4 +1,18 @@
 #' Constructor of dataRAW S3 class
+#'
+#' @param ID unique ID for file
+#' @param filename filename including path
+#' @param crc 128-bit MD5 unique hash
+#' @param size file size in bytes
+#' @param type data type of file
+#' @param missing logical, file cannot be found
+#' @param altered logical, file likely been altered
+#' @param sample string of sample name
+#' @param date date for data recording
+#' @param meta additional data in JSON format (use jsonlite)
+#'
+#' @importFrom desc desc_get_version
+#'
 #' @export
 create_dataRAW <- function(ID,
                            filename,
@@ -10,8 +24,10 @@ create_dataRAW <- function(ID,
                            sample = NULL,
                            date = NULL,
                            meta=NULL) {
-  nLen = length(filename)  # number of files to add
-  # assert that length of IDs and filenames are the same
+  # number of files to add
+  nLen = length(filename)
+
+  # assert that length of IDs and file names are the same
   if(length(ID) != nLen) {
     # extend IDs or crop IDs
     if (length(ID) < nLen) {
@@ -34,7 +50,7 @@ create_dataRAW <- function(ID,
   pRAW = .commonPath(filename)
   fPath = gsub(pRAW,"",dirname(filename))
 
-  # create basic dataframe
+  # create basic data frame
   df = data.frame(
     ID = ID,
     path = fPath,
@@ -49,10 +65,12 @@ create_dataRAW <- function(ID,
     meta = meta
   )
 
-  dataRAW <- list(
-    df = df,
-    pRAW = pRAW
-  )
+  dataRAW <- df
+  # list(
+  #   df = df,
+  #   version = desc::desc_get_version(),
+  #   pRAW = pRAW
+  # )
 
   # Assign the class attribute
   class(dataRAW) <- "dataRAW"
@@ -60,28 +78,48 @@ create_dataRAW <- function(ID,
   return(dataRAW)
 }
 
+#' @export
+as.data.frame.dataRAW <- function(d,...) {
+  data.frame(
+    ID = d$ID,
+    path = d$path,
+    filename = d$filename,
+    crc = d$crc,
+    size = d$size,
+    type = d$type,
+    missing = d$missing,
+    altered = d$altered,
+    sample = d$sample,
+    date = d$date,
+    meta = d$meta
+  )
+}
+
+
 
 #' row bind two dataRAW sets
 #' @param d1 first dataRAW object
 #' @param d2 second dataRAW object to be appended
 #' @export
 rbind.dataRAW <- function(d1, d2) {
-  if (min(d2$df$ID) <= max(d1$df$ID)) {
-    # IDs in d2 are too low and overlap; move IDs up
-    d2$df$ID = d2$df$ID + (min(d2$df$ID) - max(d1$df$ID) + 7)
-  }
+  # both objects should be dataRAW
+  if (!is(d1,"dataRAW")) stop("dataRAW 1 object required.")
+  if (!is(d2,"dataRAW")) stop("dataRAW 2 object required.")
 
-  df1 = d1$df
-  df2 = d2$df
+  df1 = as.data.frame(d1)
+  df2 = as.data.frame(d2)
   m <- which(df2$crc %in% df1$crc)
-  df2 <- df2[-m,]
+  df_dupl = df2[m,]
+  if(length(m)>0) df2 <- df2[-m,]
+
   if (nrow(df2)==0) return(d1)
+
   next_ID = max(df1$ID)
   df2$ID = 1:nrow(df2) + next_ID
-  d1$df = rbind(df1,df2)
-  d1$pRAW = c(d1$pRAW, d2$pRAW)
+  df3 = rbind(df1,df2)
 
-  d1
+  class(df3) <- "dataRAW"
+  df3
 }
 
 #' Print method for the dataRAW class
@@ -89,8 +127,8 @@ rbind.dataRAW <- function(d1, d2) {
 #' @param ... additional params
 #' @importFrom utils head tail
 #' @export
-print.dataRAW <- function(RAW, row.names = FALSE, ...) {
-  print(paste("dataRAW info on",length(RAW$ID),"files:"))
-  df = data.frame(RAW$ID, RAW$filename, RAW$size, RAW$type, RAW$sample)
+print.dataRAW <- function(d, row.names = FALSE, ...) {
+  print(paste("dataRAW info on",length(d$ID),"files:"))
+  df = data.frame(d$ID, d$filename, d$size, d$type, d$sample)
   print(df, row.names = row.names, ...)
 }

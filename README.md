@@ -1,15 +1,15 @@
-# rawData
+# RAW Data File Manager
 
-RAW data manager for scientific data investigations.
+This file manager helps analyzing scientific data from instruments (XRD, AFM, etc.) by assigning unique file IDs related a project. A raw data file contains data from an instrument and should not be altered. The file may be renamed or moved to a different directory or multiple copies are maintained in various folders. In order to make the data analysis possible on different platforms and computers, the analysis happens via the unique file ID rather than a local file name.
 
 ## Installation
 
-You can install the development version of `rawData` like so:
+You can install `rawData` as follows:
 
 ``` r
 install.packages('rawData')
-load(rawBase) # configuration data
-raw.getDatabase(rawBase, v=TRUE) # install database
+# create a rawBase S3 object for project spinPc
+rawBase <- raw.init("spinPc") 
 ```
 
 ## Scenario

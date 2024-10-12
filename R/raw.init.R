@@ -18,25 +18,26 @@
 #' @importFrom here here
 #'
 #' @export
-raw.init <- function(projectName, fileDataRAW="", paths = NA, sqlPaths = NA, recursive=TRUE, ...) {
-  # initialize rawBase
-  # ==================
-  # get current package name
-  pkgName <- basename(here::here())
-  rawBase = raw.rawBase(projectName, pkgName, paths, sqlPaths)
+raw.init <- function(projectName,
+                     legacyRAWIDfile="",
+                     paths = NULL,
+                     sqlPaths = NULL,
+                     recursive=TRUE, ...) {
+  # create a rawBase object with the information
+  rawBase = create_rawBase(projectName,
+                           paths = paths,
+                           sqlPaths = sqlPaths,
+                           legacyRAWIDfile = legacyRAWIDfile,
+                           recursive = recursive)
 
-  dRaw = NULL
-  if (file.exists(fileDataRAW)) {
-    dRaw = raw.importRAWID(fileDataRAW)
-  }
+  # import legacy file IDs first
+  rawBase = raw.importRAWID(rawBase)
 
   # look for files and add them to the dataRAW
-  dataRAW = raw.addFiles(rawBase, dataRAW = dRaw, recursive=recursive, ...)
+  rawBase = raw.addFiles(rawBase)
 
   # create the SQL database
   raw.initDB(rawBase, ...)
 
-  list(
-    rawBase = rawBase,
-    dataRAW = dataRAW)
+  rawBase
 }

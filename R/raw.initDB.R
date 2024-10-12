@@ -1,6 +1,6 @@
 #' Initialize SQL database
 #'
-#' @param rawBase list created by raw.init()
+#' @param rawBase object, use create_rawBase()
 #' @param verbose logical to display additional information
 #'
 #' @importFrom DBI dbConnect dbDisconnect
@@ -8,32 +8,35 @@
 #'
 #' @export
 raw.initDB <- function(rawBase, verbose=TRUE) {
+  if (!is(rawBase,"rawBase")) stop("rawBase oject required.")
   # generate filename
-  sqlFileName = .getSQLdbName(rawBase$pkgName)
-  if (verbose) cat("SQL file:", sqlFileName, "\n")
-
-  # is there an SQL path, then choose the first one that exists:
-  sqlPath = ""
-  for(p in rawBase$sqlPaths) {
-    if (dir.exists(p)) { sqlPath = p; break }
-  }
-  if (verbose) cat("SQL path:", sqlPath, "\n")
+  # sqlFileName = .getDatabaseFileName(rawBase$package_name)
+  # if (verbose) cat("SQL file:", sqlFileName, "\n")
+  #
+  # # is there an SQL path, then choose the first one that exists:
+  # sqlPath = ""
+  # for(p in rawBase$sqlPaths) {
+  #   if (dir.exists(p)) { sqlPath = p; break }
+  # }
+  # if (verbose) cat("SQL path:", sqlPath, "\n")
 
   # put in the same path as previous one, if there is one.
-  dbName = raw.getDatabase(rawBase, verbose=verbose)
-  if (nchar(dbName)>0) { sqlPath = dirname(dbName) }
+  dbName = .getDatabaseName(rawBase)
+  # if (nchar(dbName)>0) { sqlPath = dirname(dbName) }
+  #
+  # # if no path was found, then prompt for one:
+  # if (interactive()) {
+  #   if (sqlPath=="") {
+  #     sqlPath = .promptPath("Enter SQL path:")
+  #   }
+  # }
+  # dbFilename = file.path(sqlPath, sqlFileName)
 
-  # if no path was found, then prompt for one:
-  if (sqlPath=="") {
-    sqlPath = .promptPath("Enter SQL path:")
-  }
-  dbFilename = file.path(sqlPath, sqlFileName)
-
-  if (file.exists(dbFilename)) {
-    warning("Database file already exists:", dbFilename)
+  if (file.exists(dbName)) {
+    warning("Database file already exists:", dbName)
   } else {
-    if (verbose) cat("Creating new database:", dbFilename, "\n")
-    mydb <- dbConnect(RSQLite::SQLite(), dbFilename)
+    if (verbose) cat("Creating new database:", dbName, "\n")
+    mydb <- dbConnect(RSQLite::SQLite(), dbName)
     .writeSQLdatabaseInit(mydb)
     .updateSQLhistory(mydb, rawBase$token, "init")
     dbDisconnect(mydb)

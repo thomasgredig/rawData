@@ -10,7 +10,7 @@
 #'
 #' @export
 .cleanRawBase <- function(rawBase) {
-  paths_vars <- grep("Paths", names(rawBase), value = TRUE)
+  paths_vars <- grep("paths", names(rawBase), value = TRUE)
   rawBase[paths_vars] <- lapply(rawBase[paths_vars], unique)
 
   rawBase

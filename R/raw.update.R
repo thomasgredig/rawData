@@ -7,18 +7,14 @@
 #' @returns dataRAW table
 #'
 #' @export
-raw.update <- function(rawBase,
-                    dataRAW,
-                    path,
-                    ...) {
-  rawBase$rawPaths = c(rawBase$rawPaths, path)
+raw.update <- function(rawBase,path,...) {
+  rawBase$raw_paths = c(rawBase$raw_paths, path)
   # remove duplicate paths,etc.
   rawBase = .cleanRawBase(rawBase)
-  dataRAW = raw.addFiles(rawBase, dataRAW, ...)
-  dataRAW = raw.checkMissing(dataRAW)
+  rawBase = raw.addFiles(rawBase, ...)
+  rawBase = raw.checkMissing(rawBase)
 
-  list(rawBase = rawBase,
-       dataRAW = dataRAW)
+  rawBase
 }
 
 
@@ -30,19 +26,17 @@ raw.update <- function(rawBase,
 #' it will be updated, but not added; the ID remains the same.
 #'
 #' @param rawBase see raw.init() to create this
-#' @param dataRAW a dataRAW S3 object
-#' @param recursive logical to search paths recursively or not
 #' @param verbose logical to output more information
 #'
 #' @returns dataRAW table
 #'
 #' @export
-raw.addFiles <- function(rawBase,
-                       dataRAW = NULL,
-                       recursive = TRUE,
-                       verbose = FALSE) {
+raw.addFiles <- function(rawBase, verbose=FALSE) {
+  if (!is(rawBase,"rawBase")) stop("rawBase object required.")
+  #dataRAW = rawBase$dataRAW
+
   # find files that could potentially be added to dataRAW
-  fList = raw.find(rawBase, recursive=recursive)
+  fList = raw.find(rawBase)
 
   # Quit if no files are found.
   if (length(fList)==0) {
@@ -53,16 +47,29 @@ raw.addFiles <- function(rawBase,
 
   # Start Processing by finding the new ID
   pRAW = .commonPath(fList)
-  if (verbose) cat("Found", length(fList), "files.\n")
-  if (is.null(dataRAW)) {
-    startID = 7
-  } else {
-    startID = max(dataRAW$df$ID) + 1
-    dataRAW$df$missing = rep(TRUE, length(dataRAW$df$ID))
-  }
+  # if (verbose) print(paste("Found", length(fList), "files.\n"))
+  # if (is.null(dataRAW)) {
+  #   startID = 7
+  # } else {
+  #   startID = max(dataRAW$df$ID) + 1
+  #   dataRAW$df$missing = rep(TRUE, length(dataRAW$df$ID))
+  # }
 
+  startID = 7
   new_dataRAW = create_dataRAW(startID, fList)
-  if (is.null(dataRAW)) { dataRAW = new_dataRAW } else { dataRAW = rbind(dataRAW, new_dataRAW) }
+  if (is.null(rawBase$dataRAW)) {
+    rawBase$dataRAW = new_dataRAW
+  } else {
+    dataRAW = rawBase$dataRAW
+    if (is(dataRAW,"data.frame")) {
+      rawBase$dataRAW = new_dataRAW
+    } else {
+      if(!is(dataRAW, "dataRAW")) stop("Expecting dataRAW object.")
+      rawBase$dataRAW = rbind(dataRAW, new_dataRAW)
+    }
+
+  }
+  #  if (is.null(dataRAW)) { dataRAW = new_dataRAW } else { dataRAW = rbind(dataRAW, new_dataRAW) }
 
   # # add each file name
   # for(filename in fList) {
@@ -90,13 +97,8 @@ raw.addFiles <- function(rawBase,
   #   }
   # }
 
-  if (!is.null(attr(dataRAW, "pRAW"))) {
-    attr(dataRAW, "pRAW") <- c(attr(dataRAW, "pRAW"),pRAW)
-  } else {
-    attr(dataRAW, "pRAW") <- pRAW
-  }
 
-  return(dataRAW)
+  return(rawBase)
 }
 
 

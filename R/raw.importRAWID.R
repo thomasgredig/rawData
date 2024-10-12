@@ -3,12 +3,15 @@
 #' @param filename_RAWID filename and path for RAW-ID.csv file in data-raw folder
 #'
 #' @export
-raw.importRAWID <- function(filename_RAWID) {
-  p = ""
-  dataRAW = NULL
+raw.importRAWID <- function(rawBase) {
+  if (!is(rawBase,"rawBase")) stop("rawBase oject required.")
+  if (!file.exists(rawBase$legacyRAWIDfile)) return(rawBase)
+  if (nrow(rawBase$dataRAW)>0) stop("dataRAW must be empty to add legacy IDs")
 
   # read the header information
-  df_header <- raw.readRAWIDheader(filename_RAWID)
+  df_header <- raw.readRAWIDheader(rawBase$legacyRAWIDfile)
+  rawBase$raw_paths =  df_header$paths
+  rawBase$raw_recursive = rep(TRUE, length(df_header$paths))
 
   for(p in df_header$paths) {
     if(dir.exists(p)) pRAW = p
@@ -25,9 +28,9 @@ raw.importRAWID <- function(filename_RAWID) {
                  df$altered,
                  sample = df$sample,
                  df$date,
-                 df$meta)  -> dRaw
+                 df$meta)  -> rawBase$dataRAW
 
-  dataRAW
+  rawBase
 }
 
 
