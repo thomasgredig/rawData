@@ -1,9 +1,17 @@
 #' Constructor of rawBase S3 class
 #'
+#' @param projectName project name
+#' @param pkgName name of the package
+#' @param paths path or paths with data files
+#' @param sqlPaths paths for location of SQL database
+#' @param recursive logical weather to search paths recursively
+#' @param instrument_func vector with instruments to be updated
+#'
 #' @importFrom here here
 #'
-#' @param ID unique ID for file
+#' @export
 create_rawBase <- function(projectName,
+                           instrument_func = NULL,
                            pkgName = NULL,
                            paths = NULL,
                            recursive = TRUE,

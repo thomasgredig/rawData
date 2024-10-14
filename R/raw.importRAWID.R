@@ -1,6 +1,8 @@
 #' Imports legacy RAW-ID.csv
 #'
-#' @param filename_RAWID filename and path for RAW-ID.csv file in data-raw folder
+#' @param rawBase object that contains information with the legacy coded
+#'
+#' @returns updated rawBase object
 #'
 #' @export
 raw.importRAWID <- function(rawBase) {
@@ -46,6 +48,7 @@ raw.importRAWID <- function(rawBase) {
 #' @param fIDfile path and file name for RAW-ID.csv file
 #'
 #' @importFrom utils read.csv
+#' @importFrom stats setNames
 #'
 #' @export
 raw.readRAWIDheader <- function(fIDfile) {

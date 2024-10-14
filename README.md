@@ -9,34 +9,33 @@ You can install `rawData` as follows:
 ``` r
 install.packages('rawData')
 # create a rawBase S3 object for project spinPc
+# this will also create a SQL database
 rawBase <- raw.init("spinPc") 
 ```
 
-## Scenario
+## Scenario 1
 
 After creating a new package `dataSpin` using the template `dataProjectTemplate`, you might want to add RAW data files into that package and create a variable `dataRAW`.
 
 If the data is located in the `../RAW` folder, and files include an 8-digit date and the project name `spinPc`, then the following command will:
 
--   initialize a rawBase variable,
--   search the path for files
--   add those files to the `dataRAW` variable
+-   initialize a `rawBase` object containing relevant parameters
+-   search the path for files recursively
+-   add those files to the `dataRAW` data frame in `rawBase`
 -   try to import relevant data from XRD, AFM files and store them in `dataXRD` and `dataAFM`.
 
 ``` r
+# WORKFLOW: 
 # create a folder with 10 RAW data files
 tmpDir = get_test_RAW_folder(10, "spinnPc")
 
 # initialize raw folder and SQL database
-d <- raw.init("spinnPc",paths=tmpDir, sqlPaths=tmpDir, recursive=FALSE)
-dataRAW = d$dataRAW
-rawBase = d$rawBase
+rawBase <- raw.init("spinnPc",paths=tmpDir, sqlPaths=tmpDir, recursive=FALSE)
+d <- as.data.frame(rawBase$dataRAW) # data frame with file information
 
-# add more RAW data files and add them
-tmpDir = get_test_RAW_folder(2, "spinnPc")
-d <- raw.update(rawBase, dataRAW, path=tmpDir)
-dataRAW = d$dataRAW
-rawBase = d$rawBase
+# later you might want to update your database
+tmpDir = get_test_RAW_folder(2, "spinnPc") # new files
+rawBase <- raw.update(rawBase, dataRAW, path=tmpDir)
 ```
 
 ## Database

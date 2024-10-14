@@ -100,6 +100,7 @@ as.data.frame.dataRAW <- function(d,...) {
 #' row bind two dataRAW sets
 #' @param d1 first dataRAW object
 #' @param d2 second dataRAW object to be appended
+#' @importFrom methods is
 #' @export
 rbind.dataRAW <- function(d1, d2) {
   # both objects should be dataRAW

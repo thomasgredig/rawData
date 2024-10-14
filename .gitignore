@@ -6,3 +6,5 @@ _*.R
 
 /man
 /docs
+data/func.rda
+*.rda

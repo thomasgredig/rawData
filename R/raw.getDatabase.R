@@ -82,6 +82,7 @@ NULL
 }
 
 .getDatabaseFileName <- function(pkgName) {
-  pkgVersion = as.character(packageVersion(pkgName))
+  pkgVersion = "0.0.0"
+  if (pkgName != "tests") pkgVersion = as.character(packageVersion(pkgName))
   paste0(pkgName,"-",pkgVersion,".sqlite")
 }

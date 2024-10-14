@@ -4,15 +4,25 @@
 #' Finds files that match the project name and are located in the path.
 #' Then appends those files to the dataRAW.
 #'
-#' @returns dataRAW table
+#' @param rawBase object with information about file locations
+#' @param path path with updated information about files.
+#'
+#' @returns rawBase object
 #'
 #' @export
-raw.update <- function(rawBase,path,...) {
+raw.update <- function(rawBase, path, recursive = TRUE, ...) {
+  # add the path:
   rawBase$raw_paths = c(rawBase$raw_paths, path)
+  rawBase$raw_recursive = c(rawBase$raw_recursive, recursive)
   # remove duplicate paths,etc.
   rawBase = .cleanRawBase(rawBase)
   rawBase = raw.addFiles(rawBase, ...)
   rawBase = raw.checkMissing(rawBase)
+
+  # save the rawBase
+  usethis::use_data(rawBase, overwrite = TRUE)
+
+  raw.updateInstrument(rawBase)
 
   rawBase
 }
