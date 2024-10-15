@@ -11,12 +11,14 @@
 #'
 #' @export
 create_rawBase <- function(projectName,
-                           instrument_func = NULL,
+                           instrument_list = NULL,
                            pkgName = NULL,
                            paths = NULL,
                            recursive = TRUE,
                            sqlPaths = NULL,
                            legacyRAWIDfile = NULL) {
+  .getToken <- function() { as.numeric(Sys.time()) }
+
   if (is.null(pkgName)) pkgName = basename(here::here())
 
   projLen = nchar(projectName)
@@ -45,6 +47,8 @@ create_rawBase <- function(projectName,
   if (is.null(sqlPaths)) sqlPaths = "."
   if (is.null(legacyRAWIDfile)) legacyRAWIDfile = ""
 
+
+
   rawBase = list(
     dataRAW = data.frame(),
     project_name = projectName,
@@ -55,6 +59,11 @@ create_rawBase <- function(projectName,
     legacyRAWIDfile = legacyRAWIDfile,
     token = .getToken()
   )
+
+  # instruments, should be a list
+  if (!is.null(instrument_list)) {
+    if (is(instrument_list,"list")) rawBase$instruments = instrument_list
+  }
 
   # Assign the class attribute
   class(rawBase) <- "rawBase"
@@ -68,9 +77,10 @@ create_rawBase <- function(projectName,
 print.rawBase <- function(rawBase, ...) {
   dataRAW = as.data.frame(rawBase$dataRAW)
   cat("Project .........:",rawBase$project_name,"\n")
-  cat("Pacakge .........:",rawBase$package_name,"\n")
+  cat("Package .........:",rawBase$package_name,"\n")
   cat("RAW paths .......:",rawBase$raw_paths[1],"\n")
   cat("SQL paths .......:",rawBase$sql_paths[1],"\n")
+  cat("Instruments .....:",paste(names(rawBase$instruments), collapse=","),"\n")
   cat("RAW data files ..:", nrow(dataRAW),"\n")
 
   if (file.exists(raw.getDatabase(rawBase))) {
@@ -80,4 +90,4 @@ print.rawBase <- function(rawBase, ...) {
   }
 }
 
-.getToken <- function() { as.numeric(Sys.time()) }
+

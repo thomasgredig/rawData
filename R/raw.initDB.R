@@ -33,7 +33,7 @@ raw.initDB <- function(rawBase, verbose=TRUE) {
   # dbFilename = file.path(sqlPath, sqlFileName)
 
   if (file.exists(dbName)) {
-    warning("Database file already exists:", dbName)
+    # warning("Database file already exists:", dbName)
   } else {
     if (verbose) cat("Creating new database:", dbName, "\n")
     mydb <- dbConnect(RSQLite::SQLite(), dbName)

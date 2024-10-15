@@ -15,6 +15,7 @@
 #'
 #' @export
 create_dataRAW <- function(ID,
+                           raw_paths,
                            filename,
                            crc = NULL,
                            size = NULL,
@@ -24,6 +25,20 @@ create_dataRAW <- function(ID,
                            sample = NULL,
                            date = NULL,
                            meta=NULL) {
+
+  find_common_path <- function(paths, filenameList) {
+    .fcp <- function(paths, filename) {
+      for (path in paths) {
+        if (startsWith(filename, path)) {
+          return(gsub(path,"",filename))
+        }
+      }
+      return(filename)
+    }
+    fList <- sapply(filenameList, function(x) { .fcp(paths,x) })
+    unlist(fList)
+  }
+
   # number of files to add
   nLen = length(filename)
 
@@ -46,14 +61,13 @@ create_dataRAW <- function(ID,
   if(is.null(date)) { date = format(file.info(filename)$atime) }
   if(is.null(meta)) { meta = rep("",nLen) }
 
-  # strip out common path pRAW
-  pRAW = .commonPath(filename)
-  fPath = gsub(pRAW,"",dirname(filename))
+  # strip out common paths
+  filename = find_common_path(raw_paths, filename)
 
   # create basic data frame
   df = data.frame(
     ID = ID,
-    path = fPath,
+    path = dirname(filename),
     filename = basename(filename),
     crc = crc,
     size = size,

@@ -14,12 +14,13 @@
 #' @param paths path or paths with data files
 #' @param sqlPaths paths for location of SQL database
 #' @param recursive logical weather to search paths resursively
-#' @param instrument_func vector with instruments to be updated
+#' @param instrument_list list with instruments to be updated
 #' @param ... parameters for raw.addFiles, such as verbose
 #'
 #' @returns rawBase object
 #'
 #' @importFrom here here
+#' @importFrom usethis ui_silence
 #'
 #' @export
 raw.init <- function(projectName,
@@ -27,7 +28,7 @@ raw.init <- function(projectName,
                      paths = NULL,
                      sqlPaths = NULL,
                      recursive=TRUE,
-                     instrument_func,
+                     instrument_list = NULL,
                      ...) {
   # create a rawBase object with the information
   rawBase = create_rawBase(projectName,
@@ -35,7 +36,7 @@ raw.init <- function(projectName,
                            sqlPaths = sqlPaths,
                            legacyRAWIDfile = legacyRAWIDfile,
                            recursive = recursive,
-                           instrument_func = instrument_func)
+                           instrument_list = instrument_list)
 
   # import legacy file IDs first
   rawBase = raw.importRAWID(rawBase)
@@ -47,7 +48,9 @@ raw.init <- function(projectName,
   raw.initDB(rawBase, ...)
 
   # save the rawBase
-  usethis::use_data(rawBase, overwrite = TRUE)
+  ui_silence(
+    usethis::use_data(rawBase, overwrite = TRUE)
+  )
 
   # update the XRD, AFM, profiles.
   raw.updateInstrument(rawBase)

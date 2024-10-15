@@ -13,7 +13,7 @@ raw.updateInstrument <- function(rawBase) {
   if (is.null(rawBase$instruments)) return()
 
   for(func in names(rawBase$instruments)) {
-    r <- rawBase$instruments[[func]](rawBase)
+    rawBase$instruments[[func]](rawBase)
   }
 }
 

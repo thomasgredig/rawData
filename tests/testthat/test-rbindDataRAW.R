@@ -3,15 +3,15 @@ test_that("rbind dataRAW", {
   # bind together, expect IDs to be unique
   f1 = tempfile()
   writeLines("file1", f1)
-  d1 = create_dataRAW(7,f1 )
+  d1 = create_dataRAW(7,raw_paths = dirname(f1), f1 )
 
   f2 = tempfile()
   writeLines("file2", f2)
-  d2 = create_dataRAW(7,f2 )
+  d2 = create_dataRAW(7,raw_paths = dirname(f2),f2 )
 
   f3 = tempfile()
   writeLines("file 3", f3)
-  d3 = create_dataRAW(7,f3 )
+  d3 = create_dataRAW(7,raw_paths = dirname(f3),f3 )
 
   d4 = rbind(d1,d2)
   d4 = rbind(d4,d2)

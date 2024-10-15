@@ -15,14 +15,12 @@ raw.importRAWID <- function(rawBase) {
   rawBase$raw_paths =  df_header$paths
   rawBase$raw_recursive = rep(TRUE, length(df_header$paths))
 
-  for(p in df_header$paths) {
-    if(dir.exists(p)) pRAW = p
-  }
 
   # read all the data
-  df = read.csv(filename_RAWID, comment.char = "#")
+  df = read.csv(rawBase$legacyRAWIDfile, comment.char = "#")
   create_dataRAW(df$ID,
-                 file.path(pRAW, filename),
+                 raw_paths = df_header$paths,
+                 filename = df$filename,
                  crc = df$crc,
                  size = df$size,
                  type = df$type,
@@ -34,10 +32,6 @@ raw.importRAWID <- function(rawBase) {
 
   rawBase
 }
-
-
-
-
 
 
 #' Reads an RAW ID header

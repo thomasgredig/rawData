@@ -7,20 +7,28 @@
 #' @param rawBase object with information about file locations
 #' @param path path with updated information about files.
 #'
+#' @importFrom usethis ui_silence
+#'
 #' @returns rawBase object
 #'
 #' @export
-raw.update <- function(rawBase, path, recursive = TRUE, ...) {
+raw.update <- function(rawBase, path, projects = NULL, recursive = TRUE, ...) {
   # add the path:
   rawBase$raw_paths = c(rawBase$raw_paths, path)
   rawBase$raw_recursive = c(rawBase$raw_recursive, recursive)
+
+  # add additional projects
+  if (!is.null(projects)) rawBase$extra = c(rawBase$extra, projects)
+
   # remove duplicate paths,etc.
   rawBase = .cleanRawBase(rawBase)
   rawBase = raw.addFiles(rawBase, ...)
   rawBase = raw.checkMissing(rawBase)
 
   # save the rawBase
-  usethis::use_data(rawBase, overwrite = TRUE)
+  ui_silence(
+    usethis::use_data(rawBase, overwrite = TRUE)
+  )
 
   raw.updateInstrument(rawBase)
 
@@ -43,7 +51,6 @@ raw.update <- function(rawBase, path, recursive = TRUE, ...) {
 #' @export
 raw.addFiles <- function(rawBase, verbose=FALSE) {
   if (!is(rawBase,"rawBase")) stop("rawBase object required.")
-  #dataRAW = rawBase$dataRAW
 
   # find files that could potentially be added to dataRAW
   fList = raw.find(rawBase)
@@ -55,18 +62,9 @@ raw.addFiles <- function(rawBase, verbose=FALSE) {
     return(NULL)
   }
 
-  # Start Processing by finding the new ID
-  pRAW = .commonPath(fList)
-  # if (verbose) print(paste("Found", length(fList), "files.\n"))
-  # if (is.null(dataRAW)) {
-  #   startID = 7
-  # } else {
-  #   startID = max(dataRAW$df$ID) + 1
-  #   dataRAW$df$missing = rep(TRUE, length(dataRAW$df$ID))
-  # }
 
   startID = 7
-  new_dataRAW = create_dataRAW(startID, fList)
+  new_dataRAW = create_dataRAW(startID, rawBase$raw_paths, fList)
   if (is.null(rawBase$dataRAW)) {
     rawBase$dataRAW = new_dataRAW
   } else {
@@ -79,34 +77,6 @@ raw.addFiles <- function(rawBase, verbose=FALSE) {
     }
 
   }
-  #  if (is.null(dataRAW)) { dataRAW = new_dataRAW } else { dataRAW = rbind(dataRAW, new_dataRAW) }
-
-  # # add each file name
-  # for(filename in fList) {
-  #   new_dataRAW = create_dataRAW(startID, pRAW, filename)
-  #   if (!is.null(dataRAW)) {
-  #     # check if CRC is different
-  #     noFile = which(dataRAW$crc==new_dataRAW$crc)
-  #     if (length(noFile)>0) {
-  #       # file is already in CRC
-  #       # check if path and file name need to be updated
-  #       dataRAW$filename[noFile] = new_dataRAW$filename
-  #       dataRAW$path[noFile] = new_dataRAW$path
-  #       dataRAW$sample[noFile] = new_dataRAW$sample
-  #       dataRAW$type[noFile] = new_dataRAW$type
-  #       dataRAW$missing[noFile] = FALSE
-  #     } else {
-  #       # brand new file
-  #       dataRAW = rbind(dataRAW, new_dataRAW)
-  #       startID = startID + 1
-  #     }
-  #   } else {
-  #     # first file in dataRAW
-  #     dataRAW = new_dataRAW
-  #     startID = startID + 1
-  #   }
-  # }
-
 
   return(rawBase)
 }

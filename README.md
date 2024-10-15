@@ -10,10 +10,11 @@ You can install `rawData` as follows:
 install.packages('rawData')
 # create a rawBase S3 object for project spinPc
 # this will also create a SQL database
-rawBase <- raw.init("spinPc") 
+rawBase <- raw.init("spinPc", instrument_list=
+                      list(XRD=instrumentXRD, AFM=instrumentAFM)) 
 ```
 
-## Scenario 1
+## Scenario
 
 After creating a new package `dataSpin` using the template `dataProjectTemplate`, you might want to add RAW data files into that package and create a variable `dataRAW`.
 

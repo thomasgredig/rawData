@@ -20,15 +20,18 @@ raw.find <- function(rawBase, recursive=TRUE) {
 
   paths = rawBase$raw_paths
   projectName = rawBase$project_name
+  project_names = c(projectName, rawBase$extra)
 
   fList = c()
   for(path in paths) {
-    fList = c(fList, dir(path,
-        pattern = paste0(".*20\\d{6}[_-]",projectName,"[_-].*"),
-        ignore.case = TRUE,
-        include.dirs = TRUE,
-        full.names = TRUE,
-        recursive = recursive))
+    for(projectName in project_names) {
+      fList = c(fList, dir(path,
+          pattern = paste0(".*20\\d{6}[_-]",projectName,"[_-].*"),
+          ignore.case = TRUE,
+          include.dirs = TRUE,
+          full.names = TRUE,
+          recursive = recursive))
+    }
   }
   fList
 }

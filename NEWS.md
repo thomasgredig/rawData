@@ -1,3 +1,8 @@
+# rawData 0.2.1
+
+* add instrument data saving ability with instrumentXRD
+* adding instrumentAFM for import
+
 # rawData 0.2.0
 
 * use a dataframe within the dataRAW S3 class
