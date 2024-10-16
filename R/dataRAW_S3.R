@@ -1,6 +1,7 @@
 #' Constructor of dataRAW S3 class
 #'
 #' @param ID unique ID for file
+#' @param raw_paths vector with paths to search files
 #' @param filename filename including path
 #' @param crc 128-bit MD5 unique hash
 #' @param size file size in bytes
@@ -139,6 +140,7 @@ rbind.dataRAW <- function(d1, d2) {
 
 #' Print method for the dataRAW class
 #' @param RAW created with create_dataRAW() function
+#' @param row.names logical to output additional row names
 #' @param ... additional params
 #' @importFrom utils head tail
 #' @export

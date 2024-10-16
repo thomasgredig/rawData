@@ -10,11 +10,11 @@
 #' project and also a path to store the SQL data.
 #'
 #' @param projectName short string with the project name "spinPc"
-#' @param fileDataRAW filename with RAW-ID.csv data file (legacy code)
 #' @param paths path or paths with data files
 #' @param sqlPaths paths for location of SQL database
 #' @param recursive logical weather to search paths resursively
 #' @param instrument_list list with instruments to be updated
+#' @param legacyRAWIDfile filename with RAW-ID.csv data file (legacy code)
 #' @param ... parameters for raw.addFiles, such as verbose
 #'
 #' @returns rawBase object
@@ -24,19 +24,19 @@
 #'
 #' @export
 raw.init <- function(projectName,
-                     legacyRAWIDfile="",
                      paths = NULL,
                      sqlPaths = NULL,
                      recursive=TRUE,
-                     instrument_list = NULL,
+                     instrument_list = list(XRD = instrumentXRD, AFM = instrumentAFM),
+                     legacyRAWIDfile="",
                      ...) {
   # create a rawBase object with the information
   rawBase = create_rawBase(projectName,
                            paths = paths,
                            sqlPaths = sqlPaths,
-                           legacyRAWIDfile = legacyRAWIDfile,
                            recursive = recursive,
-                           instrument_list = instrument_list)
+                           instrument_list = instrument_list,
+                           legacyRAWIDfile = legacyRAWIDfile)
 
   # import legacy file IDs first
   rawBase = raw.importRAWID(rawBase)

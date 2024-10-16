@@ -13,12 +13,21 @@ instrumentXRD <- function(rawBase) {
     grepl('rasx$', filename) | grepl('asc$', filename)
   }
 
+  # import previous datasets
+  if(exists("dataXRD")) {
+    r = dataXRD
+    old_IDs = unique(r$ID)
+  } else {
+    r = data.frame()
+    old_IDs = c()
+  }
+
   # data frame with all files
   df <- as.data.frame(rawBase$dataRAW)
 
   # load all XRD data
-  r = data.frame()
   for(ID in df$ID) {
+    if (ID %in% old_IDs) next
     filename = raw.getFilename(rawBase, ID)
     if (!file.exists(filename)) next
     if (!.isxrd(filename)) next
@@ -28,8 +37,8 @@ instrumentXRD <- function(rawBase) {
     r = rbind(r,d)
   }
 
-  # save data to file
   dataXRD = r
+
   ui_silence(
     use_data(dataXRD, overwrite=TRUE)
   )

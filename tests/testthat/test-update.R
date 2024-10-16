@@ -26,7 +26,7 @@ test_that("check dataRAW update", {
   expect_true(file.remove(file_delete))
   file_delete = dir(tmpDir, pattern=projectName, full.names=TRUE)[3]
   expect_true(file.remove(file_delete))
-  rawBase <- raw.update(rawBase, dataRAW, path=tmpDir)
+  rawBase <- raw.update(rawBase, path=tmpDir)
   dataRAW = as.data.frame(rawBase$dataRAW)
   expect_equal(dataRAW$ID, 7:18)
   expect_equal(length(which(dataRAW$missing==TRUE)),2)
@@ -34,7 +34,7 @@ test_that("check dataRAW update", {
   # RENAME a file
   file_rename = dir(tmpDir, pattern=projectName, full.names=TRUE)[5]
   file.rename(file_rename, gsub("Sample","Probe", file_rename))
-  rawBase <- raw.update(rawBase, dataRAW, path=tmpDir)
+  rawBase <- raw.update(rawBase, path=tmpDir)
   dataRAW = as.data.frame(rawBase$dataRAW)
   expect_equal(dataRAW$ID, 7:18)
 
@@ -44,7 +44,7 @@ test_that("check dataRAW update", {
   file_move = dir(tmpDir, pattern=projectName, full.names=TRUE)[6]
   file_move_new = file.path(newFolder,basename(file_move))
   file.rename(file_move, file_move_new)
-  rawBase <- raw.update(rawBase, dataRAW, path=newFolder)
+  rawBase <- raw.update(rawBase, path=newFolder)
   dataRAW = as.data.frame(rawBase$dataRAW)
   expect_equal(dataRAW$ID, 7:18)
 })

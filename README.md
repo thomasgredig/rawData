@@ -28,15 +28,15 @@ If the data is located in the `../RAW` folder, and files include an 8-digit date
 ``` r
 # WORKFLOW: 
 # create a folder with 10 RAW data files
-tmpDir = get_test_RAW_folder(10, "spinnPc")
+tmpDir = get_test_RAW_folder(10, "spinPc")
 
 # initialize raw folder and SQL database
-rawBase <- raw.init("spinnPc",paths=tmpDir, sqlPaths=tmpDir, recursive=FALSE)
+rawBase <- raw.init("spinPc",paths=tmpDir, sqlPaths=tmpDir, recursive=FALSE)
 d <- as.data.frame(rawBase$dataRAW) # data frame with file information
 
 # later you might want to update your database
-tmpDir = get_test_RAW_folder(2, "spinnPc") # new files
-rawBase <- raw.update(rawBase, dataRAW, path=tmpDir)
+tmpDir = get_test_RAW_folder(2, "spinPc") # new files
+rawBase <- raw.update(rawBase)
 ```
 
 ## Database
@@ -51,8 +51,14 @@ Therefore, in addition to installing the database package, you will also need to
 
 Each update to the dataRAW table creates a new token in rawBase; this token should agree with the token in the SQL database; otherwise, the database is out of sync.
 
+If the SQL package has been moved to a new folder, then you can re-establish the folder by adding it to the package:
+
+``` R
+rawBase <- raw.update(rawBase, sqlPath = "/newPath/")
+```
+
 ## Package
 
-Run `covr::report()` to create a coverage report: **70.34%**
+Run `covr::report()` to create a coverage report: **62.82%**
 
 Run `pkgdown::build_site()` to create the documentation.

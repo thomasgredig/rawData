@@ -1,3 +1,7 @@
+# rawData 0.2.2
+
+* add rawBase$import_history, which has a table with the history of folders to be added
+
 # rawData 0.2.1
 
 * add instrument data saving ability with instrumentXRD

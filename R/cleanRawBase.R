@@ -3,6 +3,8 @@
 #' @description
 #' Any variable that contains "Paths" will have duplicate paths removed.
 #'
+#' @param rawBase S3 object
+#' @returns updated rawBase object
 #' @examples
 #' rawBase = list(varWithDuplicates = c("letters","A","B","A","A","B","C"),
 #'                 myPaths = c("letters","A","B","A","A","B","C"))

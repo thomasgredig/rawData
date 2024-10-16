@@ -6,23 +6,32 @@
 #'
 #' @param rawBase object with information about file locations
 #' @param path path with updated information about files.
+#' @param project any new project to be added to be searched
+#' @param sqlPath any SQL path to be added
+#' @param recursive logical, recursive search in path
 #'
 #' @importFrom usethis ui_silence
 #'
 #' @returns rawBase object
 #'
 #' @export
-raw.update <- function(rawBase, path, projects = NULL, recursive = TRUE, ...) {
+raw.update <- function(rawBase,
+                       path = NULL,
+                       project = NULL,
+                       sqlPath = NULL,
+                       recursive = TRUE) {
   # add the path:
-  rawBase$raw_paths = c(rawBase$raw_paths, path)
-  rawBase$raw_recursive = c(rawBase$raw_recursive, recursive)
-
-  # add additional projects
-  if (!is.null(projects)) rawBase$extra = c(rawBase$extra, projects)
+  if(!is.null(path)) rawBase$raw_paths = c(rawBase$raw_paths, path)
+  rawBase$import_history = update_rawBaseHistory(rawBase$import_history,
+                                                 "add",project,path,recursive)
+  # update SQL paths
+  if(!is.null(sqlPath)) {
+    if (dir.exists(sqlPath)) rawBase$sql_paths = c(rawBase$sql_paths, sqlPath)
+  }
 
   # remove duplicate paths,etc.
   rawBase = .cleanRawBase(rawBase)
-  rawBase = raw.addFiles(rawBase, ...)
+  rawBase = raw.addFiles(rawBase)
   rawBase = raw.checkMissing(rawBase)
 
   # save the rawBase

@@ -55,6 +55,7 @@ raw.initDB <- function(rawBase, verbose=TRUE) {
 
 #' writes a SQLite database initialization
 #' @param mydb database connection from DBI::dbConnect
+#' @param verbose logical to output extra information
 #' @importFrom DBI dbCreateTable
 #' @export
 .writeSQLdatabaseInit <- function(mydb, verbose=FALSE) {
@@ -111,6 +112,8 @@ raw.showHistoryDB <- function(rawBase) {
 
 #' updates the sqlHistory table
 #' @param mydb database connection from DBI::dbConnect
+#' @param token a number representing the time
+#' @param description string with description of update
 #' @importFrom DBI dbWriteTable
 .updateSQLhistory <- function(mydb, token, description) {
   tbl <- .getSQLtableNames()

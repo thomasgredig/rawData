@@ -3,19 +3,20 @@
 #' @param projectName project name
 #' @param pkgName name of the package
 #' @param paths path or paths with data files
-#' @param sqlPaths paths for location of SQL database
 #' @param recursive logical weather to search paths recursively
-#' @param instrument_func vector with instruments to be updated
+#' @param sqlPaths paths for location of SQL database
+#' @param instrument_list vector with instruments to be updated
+#' @param legacyRAWIDfile full path and file name of RAW-ID.csv file
 #'
 #' @importFrom here here
 #'
 #' @export
 create_rawBase <- function(projectName,
-                           instrument_list = NULL,
                            pkgName = NULL,
                            paths = NULL,
                            recursive = TRUE,
                            sqlPaths = NULL,
+                           instrument_list = NULL,
                            legacyRAWIDfile = NULL) {
   .getToken <- function() { as.numeric(Sys.time()) }
 
@@ -47,14 +48,16 @@ create_rawBase <- function(projectName,
   if (is.null(sqlPaths)) sqlPaths = "."
   if (is.null(legacyRAWIDfile)) legacyRAWIDfile = ""
 
-
-
   rawBase = list(
     dataRAW = data.frame(),
     project_name = projectName,
     package_name = pkgName,
     raw_paths = paths,
-    raw_recursive = recursive,
+    import_history = create_rawBaseHistory(
+      action = "add",
+      project = projectName,
+      path = paths,
+      recursive = recursive),
     sql_paths = sqlPaths,
     legacyRAWIDfile = legacyRAWIDfile,
     token = .getToken()
@@ -62,7 +65,11 @@ create_rawBase <- function(projectName,
 
   # instruments, should be a list
   if (!is.null(instrument_list)) {
-    if (is(instrument_list,"list")) rawBase$instruments = instrument_list
+    if (is(instrument_list,"list")) {
+      rawBase$instruments = instrument_list
+    } else {
+      warning("Instrument list must be a list.")
+    }
   }
 
   # Assign the class attribute
@@ -79,9 +86,10 @@ print.rawBase <- function(rawBase, ...) {
   cat("Project .........:",rawBase$project_name,"\n")
   cat("Package .........:",rawBase$package_name,"\n")
   cat("RAW paths .......:",rawBase$raw_paths[1],"\n")
+  cat("Project names ...:",unique(rawBase$import_history$project),"\n")
   cat("SQL paths .......:",rawBase$sql_paths[1],"\n")
   cat("Instruments .....:",paste(names(rawBase$instruments), collapse=","),"\n")
-  cat("RAW data files ..:", nrow(dataRAW),"\n")
+  cat("RAW data files ..:",nrow(dataRAW),"\n")
 
   if (file.exists(raw.getDatabase(rawBase))) {
     cli_alert_success("Success finding SQL database.")
@@ -91,3 +99,35 @@ print.rawBase <- function(rawBase, ...) {
 }
 
 
+create_rawBaseHistory <- function(action,project,path,recursive) {
+  if(is.null(project)) project = ""
+  if(is.null(path)) path = ""
+
+  rawBaseHistory = data.frame(
+    action = action,
+    project = project,
+    path = path,
+    recursive = recursive
+  )
+  rawBaseHistory
+}
+
+update_rawBaseHistory <- function(rh,action,project,path,recursive) {
+  if(is.null(project)) { project = rh$project[nrow(rh)] }  # inherit previous
+  if(is.null(path)) { path= rh$path[nrow(rh)] } # inherit previous
+  rh_new = create_rawBaseHistory(action,project,path,recursive)
+  if(similar_rawBaseHistory(rh, rh_new)) return(rh)
+  rbind(rh, rh_new)
+}
+
+# checks whether rh_new is already similar to rh_vec somewhere
+similar_rawBaseHistory <- function(rh_vec, rh_new) {
+  matchFound = FALSE
+  q = which(rh_new$path == rh_vec$path)
+  if (length(q)>0) {
+    rh_vec = rh_vec[q,]
+    q1 = which(rh_new$project == rh_vec$project)
+    if (length(q1)>0) matchFound = TRUE
+  }
+  matchFound
+}

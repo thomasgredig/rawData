@@ -17,9 +17,19 @@ instrumentAFM <- function(rawBase) {
   # data frame with all files
   df <- as.data.frame(rawBase$dataRAW)
 
+  # import previous datasets
+  if(exists("dataFilesAFM")) {
+    r = dataFilesAFM
+    old_IDs = unique(r$ID)
+  } else {
+    r = data.frame()
+    old_IDs = c()
+  }
+
   # load all XRD data
   result = data.frame()
   for(ID in df$ID) {
+    if (ID %in% old_IDs) next
     filename = raw.getFilename(rawBase, ID)
     if (!file.exists(filename)) next
     if (!.isafm(filename)) next
