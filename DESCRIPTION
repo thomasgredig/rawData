@@ -9,7 +9,13 @@ Authors@R:
 Maintainer: Thomas Gredig <thomas.gredig@csulb.edu>
 Description: Store all scientific RAW data in one repository for
       analysis. This RAW data manager keeps track of files by 
-      assigning a permanent ID. 
+      assigning a permanent ID. The data files are tracked by 
+      a cyclic redundancy code to keep the unique file ID. If
+      files are renamed, moved, or copied, the ID is preserved.
+      The same files can be managed in different file systems,
+      as the RAW Data manager checks for best availability of 
+      the data. Data from common instruments is imported into data 
+      frames that hold all data grouped by ID. 
 License: GPL (>= 3)
 Encoding: UTF-8
 LazyData: true

@@ -53,7 +53,7 @@ Each update to the dataRAW table creates a new token in rawBase; this token shou
 
 If the SQL package has been moved to a new folder, then you can re-establish the folder by adding it to the package:
 
-``` R
+``` r
 rawBase <- raw.update(rawBase, sqlPath = "/newPath/")
 ```
 
