@@ -45,9 +45,9 @@ Some data is too large to be saved directly within the data package: usually AFM
 
 Therefore, in addition to installing the database package, you will also need to install the SQL database. Tables in the database:
 
--   afmData: contains filenames with AFM data
+-   **afmData**: contains file names with AFM data
 
--   sqlHistory: history of DB access contains a token
+-   **sqlHistory**: history of DB access contains a token
 
 Each update to the dataRAW table creates a new token in rawBase; this token should agree with the token in the SQL database; otherwise, the database is out of sync.
 

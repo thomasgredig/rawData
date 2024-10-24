@@ -141,13 +141,14 @@ raw.addFiles <- function(rawBase, verbose=FALSE) {
   if (grepl('\\_EDS',f)) type = "EDS"
   if (grepl('\\_SEM',f)) type = "SEM"
   if (grepl('\\_Rxx',f)) type = "AMR"
-  if (grepl('\\_DAT',f)) type = "VSM"
+  if (grepl('\\_VSM',f)) type = "VSM"
 
   if (type=="") {
     f = tools::file_ext(filename)
     if (grepl('nid',f)) type = 'AFM'
     if (grepl('ras[x]',f)) type = 'XRD'
     if (grepl('ibw',f)) type = 'AFM'
+    if (grepl('dat',f)) type = 'PPMS'
     if (grepl('tiff',f)) type = 'AFM'
     if (grepl('\\d{3}',f)) type = 'AFM'
     if (grepl('csv',f)) type = 'table'

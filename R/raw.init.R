@@ -17,7 +17,7 @@
 #' @param legacyRAWIDfile filename with RAW-ID.csv data file (legacy code)
 #' @param ... parameters for raw.addFiles, such as verbose
 #'
-#' @returns rawBase object
+#' @return rawBase object
 #'
 #' @importFrom here here
 #' @importFrom usethis ui_silence
