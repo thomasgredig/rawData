@@ -20,6 +20,7 @@ raw.update <- function(rawBase,
                        project = NULL,
                        sqlPath = NULL,
                        recursive = TRUE) {
+  check_rawBase(rawBase)
   # add the path:
   if(!is.null(path)) rawBase$raw_paths = c(rawBase$raw_paths, path)
   rawBase$import_history = update_rawBaseHistory(rawBase$import_history,
@@ -169,4 +170,11 @@ raw.addFiles <- function(rawBase, verbose=FALSE) {
   }
   names(d) = dfNames
   d
+}
+
+# provides error if rawBase is not in the correct format
+check_rawBase <-function(rawBase) {
+  if(!inherits(rawBase,"rawBase")) {
+    stop("Requires a rawBase object.")
+  }
 }
