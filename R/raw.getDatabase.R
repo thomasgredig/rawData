@@ -25,7 +25,8 @@
 #'
 #' @export
 raw.getDatabase <- function(rawBase, verbose = FALSE) {
-  if (!is(rawBase, "rawBase")) stop("rawBase object required.")
+  check_rawBase(rawBase)
+
   dbFolderListFile <- rawBase$sql_paths
   dbFile <- NULL
 
@@ -68,21 +69,46 @@ raw.getDatabase <- function(rawBase, verbose = FALSE) {
 # Helper functions
 NULL
 
-.getDatabaseName <- function(rawBase) {
-  if (!is(rawBase, "rawBase")) stop("rawBase object required.")
-  sqlPath = "."
+# if include_oldVersions is TRUE, then other versions of the database are also returned
+.getDatabaseName <- function(rawBase, include_oldVersions = FALSE) {
+  sqlPath = ""
   sqlFile = .getDatabaseFileName(rawBase$package_name)
-  for(p in rawBase$sql_paths) {
-    if (file.exists(file.path(p,sqlFile))) {
-      sqlPath = p
-      break
+  sqlPattern = .getDatabaseFileName(rawBase$package_name, pattern=TRUE)
+  sql_files = c()
+
+  for(sqlPath in rawBase$sql_paths) {
+    if(dir.exists(sqlPath)) {
+      # check for exact match
+      if (file.exists(file.path(sqlPath,sqlFile))) {
+        sql_files = c(sql_files, file.path(sqlPath, sqlFile))
+      } else {
+        if (include_oldVersions) {
+          # check for other versions in the same folder
+          fList = dir(sqlPath, pattern = sqlPattern)
+          if (length(fList) != 0L) {
+            sql_files = c(sql_files, file.path(sqlPath, fList))
+          }
+        }
+      }
     }
   }
-  file.path(p, sqlFile)
+
+  if(length(sql_files)>0L) { sql_files= get_highest_version_file(sql_files) }
+  sql_files
 }
 
-.getDatabaseFileName <- function(pkgName) {
+#' get full path of SQL database
+#'
+#' if pattern is TRUE, then use * for version, otherwise match current
+#'  version
+#' @param pkgName name of package
+#' @param pattern \code{logical} whether all versions are allowed
+#' @importFrom utils packageVersion
+#' @noRd
+.getDatabaseFileName <- function(pkgName, pattern=FALSE) {
   pkgVersion = "0.0.0"
-  if (pkgName != "tests") pkgVersion = as.character(packageVersion(pkgName))
+  if (pkgName != "tests") {
+    pkgVersion <- if (pattern) "*" else as.character(packageVersion(pkgName))
+  }
   paste0(pkgName,"-",pkgVersion,".sqlite")
 }

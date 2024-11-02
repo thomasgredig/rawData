@@ -16,4 +16,7 @@ test_that("import xrd data", {
 
   dataRAW = as.data.frame(rawBase$dataRAW)
   expect_equal(length(dataRAW$ID), 10)
+
+  # delete database
+  file.remove(raw.getDatabase(rawBase))
 })

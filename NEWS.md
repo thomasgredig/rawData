@@ -1,5 +1,7 @@
 # rawData 0.2.3
 
+* update SQL database version, if needed
+
 # rawData 0.2.2
 
 * add rawBase$import_history, which has a table with the history of folders to be added

@@ -56,20 +56,21 @@ raw.update <- function(rawBase,
 #' @param rawBase see raw.init() to create this
 #' @param verbose logical to output more information
 #'
+#' @importFrom cli cli_alert_warning
+#'
 #' @returns dataRAW table
 #'
 #' @export
 raw.addFiles <- function(rawBase, verbose=FALSE) {
-  if (!is(rawBase,"rawBase")) stop("rawBase object required.")
+  check_rawBase(rawBase)
 
   # find files that could potentially be added to dataRAW
   fList = raw.find(rawBase)
 
   # Quit if no files are found.
   if (length(fList)==0) {
-    cat("No RAW data files are found in these folders;
-        check file naming conventions.")
-    return(NULL)
+    cli_alert_warning("No RAW data files are found in these folders; check file naming conventions.")
+    return(rawBase)
   }
 
 

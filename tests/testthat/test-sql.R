@@ -7,7 +7,7 @@ test_that("SQL database location", {
                       sqlPaths=tmpDir,
                       recursive=FALSE,
                       verbose=FALSE)
-  sqlfile= dir(tmpDir, pattern="lite$", full.names = TRUE)
+  sqlfile = dir(tmpDir, pattern="lite$", full.names = TRUE)
   expect_true(file.exists(sqlfile))
 
   # move SQL to new folder
@@ -22,4 +22,36 @@ test_that("SQL database location", {
   rawBase <- raw.update(rawBase, sqlPath = file.path(dirname(sqlfile),newSQLdir))
   # DB is found again
   expect_true(file.exists(raw.getDatabase(rawBase)))
+
+  # delete database
+  file.remove(raw.getDatabase(rawBase))
 })
+
+
+test_that("update version", {
+  num = floor(runif(1,101,200))
+  projectName = paste0("sql",num)
+  tmpDir = get_test_RAW_folder(2, projectName)
+  rawBase <- raw.init(projectName,
+                      paths=tmpDir,
+                      sqlPaths=tmpDir,
+                      recursive=FALSE,
+                      verbose=FALSE)
+  sqlfile = dir(tmpDir, pattern="lite$", full.names = TRUE)
+  # change SQL to old version
+  old_sqlfile = gsub("(.*)-\\d+\\.\\d+\\.\\d+\\.sqlite$","\\1-0.0.0.sqlite",sqlfile)
+  expect_true(file.rename(from = sqlfile, to =old_sqlfile))
+  expect_true(file.exists(old_sqlfile))
+  # initialize again; should recognize old SQL file and update version back.
+  rawBase <- raw.init(projectName,
+                      paths=tmpDir,
+                      sqlPaths=tmpDir,
+                      recursive=FALSE,
+                      verbose=FALSE)
+
+  expect_true(file.exists(sqlfile))
+
+  # delete database
+  file.remove(raw.getDatabase(rawBase))
+})
+

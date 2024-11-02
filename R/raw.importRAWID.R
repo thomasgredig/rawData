@@ -6,7 +6,7 @@
 #'
 #' @export
 raw.importRAWID <- function(rawBase) {
-  if (!is(rawBase,"rawBase")) stop("rawBase oject required.")
+  check_rawBase(rawBase)
   if (!file.exists(rawBase$legacyRAWIDfile)) return(rawBase)
   if (nrow(rawBase$dataRAW)>0) stop("dataRAW must be empty to add legacy IDs")
 

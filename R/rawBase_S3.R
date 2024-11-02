@@ -131,3 +131,10 @@ similar_rawBaseHistory <- function(rh_vec, rh_new) {
   }
   matchFound
 }
+
+# check of whether the rawBase is valid
+#' @importFrom cli cli_abort
+#' @noRd
+check_rawBase <- function(rawBase) {
+  if (!is(rawBase,"rawBase")) cli_abort("rawBase object required.")
+}

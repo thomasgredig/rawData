@@ -47,5 +47,8 @@ test_that("check dataRAW update", {
   rawBase <- raw.update(rawBase, path=newFolder)
   dataRAW = as.data.frame(rawBase$dataRAW)
   expect_equal(dataRAW$ID, 7:18)
+
+  # delete database
+  file.remove(raw.getDatabase(rawBase))
 })
 

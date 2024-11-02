@@ -1,47 +1,84 @@
 #' Initialize SQL database
 #'
+#' Create and initialize a database, if none exists. The SQLite
+#' database can store images and large data files, which would
+#' otherwise slow down the R package. The database contains the
+#' name of the package, includes the version number and ends
+#' with .sqlite. Before creating a new database, it checks whether
+#' a database already exists; it might have an older version. If
+#' so, then it updates (renames) the file to correspond to the
+#' latest version. The rawBase object stores information to what
+#' is stored in this separate database, in case it gets lost or
+#' needs to be recreated.
+#'
 #' @param rawBase object, use create_rawBase()
 #' @param verbose logical to display additional information
 #'
 #' @importFrom DBI dbConnect dbDisconnect
 #' @importFrom RSQLite SQLite
+#' @importFrom cli cli_inform
 #'
 #' @export
 raw.initDB <- function(rawBase, verbose=TRUE) {
-  if (!is(rawBase,"rawBase")) stop("rawBase oject required.")
-  # generate filename
-  # sqlFileName = .getDatabaseFileName(rawBase$package_name)
-  # if (verbose) cat("SQL file:", sqlFileName, "\n")
-  #
-  # # is there an SQL path, then choose the first one that exists:
-  # sqlPath = ""
-  # for(p in rawBase$sqlPaths) {
-  #   if (dir.exists(p)) { sqlPath = p; break }
-  # }
-  # if (verbose) cat("SQL path:", sqlPath, "\n")
+  check_rawBase(rawBase) # make sure, it is a valid object
 
-  # put in the same path as previous one, if there is one.
-  dbName = .getDatabaseName(rawBase)
-  # if (nchar(dbName)>0) { sqlPath = dirname(dbName) }
-  #
-  # # if no path was found, then prompt for one:
-  # if (interactive()) {
-  #   if (sqlPath=="") {
-  #     sqlPath = .promptPath("Enter SQL path:")
-  #   }
-  # }
-  # dbFilename = file.path(sqlPath, sqlFileName)
-
-  if (file.exists(dbName)) {
-    # warning("Database file already exists:", dbName)
-  } else {
-    if (verbose) cat("Creating new database:", dbName, "\n")
-    mydb <- dbConnect(RSQLite::SQLite(), dbName)
-    .writeSQLdatabaseInit(mydb)
-    .updateSQLhistory(mydb, rawBase$token, "init")
-    dbDisconnect(mydb)
+  if (sql_database_exists(rawBase)) {
+    cli_inform("SQL database already exists; no new database generated, updated if needed.")
+    # if needed, update the version in the name of the database.
+    update_databaseName(rawBase)
+    return(rawBase)
   }
 
+  dbName = get_newSQLname(rawBase)
+
+  if (verbose) cat("Creating new database:", dbName, "\n")
+  if (file.exists(dbName)) {
+    warning("Cannot create SQLite database, because it already exists.")
+    return(rawBase)
+  }
+  mydb <- dbConnect(RSQLite::SQLite(), dbName)
+  .writeSQLdatabaseInit(mydb)
+  .updateSQLhistory(mydb, rawBase$token, "init")
+  dbDisconnect(mydb)
+
+  return(rawBase)
+}
+
+# check if database already exists, must have
+# exact match with version
+sql_database_exists <- function(rawBase) {
+  dbName = .getDatabaseName(rawBase, include_oldVersions = TRUE)
+  if(is.null(dbName)) return(FALSE)
+  file.exists(dbName)
+}
+
+update_databaseName <- function(rawBase) {
+  dbOldVersion = .getDatabaseName(rawBase, include_oldVersions = TRUE)
+  dbNewVersion = .getDatabaseName(rawBase, include_oldVersions = FALSE)
+  if (dbOldVersion != dbNewVersion) {
+    # update old version to new version
+    dbNewVersion = file.path(dirname(dbOldVersion), basename(dbNewVersion))
+    file.rename(from=dbOldVersion,
+                to = dbNewVersion)
+  }
+}
+
+# returns the new SQL database name:
+# - first forms the name (using the new version)
+# - finds an existing directory
+get_newSQLname <- function(rawBase) {
+  sql_filename = .getDatabaseFileName(rawBase$package_name)
+  sql_path = ""
+  for(p in rawBase$sql_paths) {
+    if (dir.exists(p)) {
+      sql_path = p
+      break
+    }
+  }
+  sql_fullname = file.path(sql_path, sql_filename)
+  # this should not happen, but just checking
+  if (file.exists(sql_fullname)) warning("SQL file already exists; error in get_newSQLname() function.")
+  sql_fullname
 }
 
 #' Returns SQLite table names
@@ -127,4 +164,30 @@ raw.showHistoryDB <- function(rawBase) {
 
   dbWriteTable(mydb, tbl$tblNameHistory,
                new_row, append = TRUE, row.names = FALSE)
+}
+
+
+get_highest_version_file <- function(file_paths) {
+  check_sql_file_paths(file_paths)
+  # Extract version numbers from file paths
+  extract_version <- function(file_path) {
+    version <- sub(".*-(\\d+\\.\\d+\\.\\d+)\\.sqlite$", "\\1", file_path)
+    as.numeric_version(version)
+  }
+
+  # Apply the extract_version function to all file paths
+  versions <- sapply(file_paths, extract_version)
+  v_num = sapply(versions, function(x) { x[1]*100+x[2]*10+x[3]})
+
+  # Find the index of the highest version
+  highest_version_index <- which.max(v_num)
+
+  # Return the file path with the highest version
+  file_paths[highest_version_index]
+}
+
+# check that the files look like c("db-0.2.3.sqlite","db-0.2.1.sqlite")
+check_sql_file_paths <- function(file_paths) {
+  if(!inherits(file_paths,"character")) stop("Must provide a character string to check version.")
+  if(!any(grepl("sqlite$",file_paths) == TRUE)) stop("All files must be SQLite database files.")
 }
