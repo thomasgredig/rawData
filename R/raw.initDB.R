@@ -171,13 +171,22 @@ get_highest_version_file <- function(file_paths) {
   check_sql_file_paths(file_paths)
   # Extract version numbers from file paths
   extract_version <- function(file_path) {
-    version <- sub(".*-(\\d+\\.\\d+\\.\\d+)\\.sqlite$", "\\1", file_path)
+    version <- sub(".*-([0-9\\.]+)\\.sqlite$", "\\1", file_path)
     as.numeric_version(version)
+  }
+  version2num <- function(x_vec) {
+    v = 0
+    mfactor = 10^9
+    for(x in x_vec) {
+      v = v+x*mfactor
+      if(mfactor>100) mfactor=mfactor/100
+    }
+    v
   }
 
   # Apply the extract_version function to all file paths
   versions <- sapply(file_paths, extract_version)
-  v_num = sapply(versions, function(x) { x[1]*100+x[2]*10+x[3]})
+  v_num = sapply(versions, version2num)
 
   # Find the index of the highest version
   highest_version_index <- which.max(v_num)

@@ -55,3 +55,10 @@ test_that("update version", {
   file.remove(raw.getDatabase(rawBase))
 })
 
+test_that("version", {
+  file_paths = c("dataCalibration1-1.2.1.sqlite","dataCalibration1-0.0.0.9000.sqlite",
+                 "dataCalibration1-1.1.22.sqlite","dataCalibration1-1.sqlite",
+                 "dataCalibration1-1.2.sqlite")
+  latest_file = get_highest_version_file(file_paths)
+  expect_equal(latest_file, file_paths[1])
+})
