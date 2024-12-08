@@ -31,6 +31,7 @@ instrumentAFM <- function(rawBase) {
   for(ID in df$ID) {
     if (ID %in% old_IDs) next
     filename = raw.getFilename(rawBase, ID)
+    cat("Loading: ", filename, "...\n")
     if (!file.exists(filename)) next
     if (!.isafm(filename)) next
 

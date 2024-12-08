@@ -10,10 +10,14 @@
 #'
 #' @export
 raw.updateInstrument <- function(rawBase) {
-  if (is.null(rawBase$instruments)) return()
+  success = FALSE
+  if (is.null(rawBase$instruments)) return(success)
 
   for(func in names(rawBase$instruments)) {
     rawBase$instruments[[func]](rawBase)
+    success = TRUE
   }
+
+  success
 }
 

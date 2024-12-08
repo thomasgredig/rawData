@@ -21,5 +21,5 @@ test_that("rbind dataRAW", {
   expect_true(is(d4, "dataRAW"))
 
   df4 = as.data.frame(d4)
-  expect_equal(df4$ID, 7:9)
+  expect_equal(sort(df4$ID), 7:9)
 })

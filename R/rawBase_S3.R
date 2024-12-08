@@ -64,13 +64,7 @@ create_rawBase <- function(projectName,
   )
 
   # instruments, should be a list
-  if (!is.null(instrument_list)) {
-    if (is(instrument_list,"list")) {
-      rawBase$instruments = instrument_list
-    } else {
-      warning("Instrument list must be a list.")
-    }
-  }
+  raw.addInstrument(rawBase, instrument_list)
 
   # Assign the class attribute
   class(rawBase) <- "rawBase"

@@ -12,6 +12,7 @@ instrumentXRD <- function(rawBase) {
   .isxrd <- function(filename) {
     grepl('rasx$', filename) | grepl('asc$', filename)
   }
+  check_rawBase(rawBase)
 
   # import previous datasets
   if(exists("dataXRD")) {
@@ -24,6 +25,7 @@ instrumentXRD <- function(rawBase) {
 
   # data frame with all files
   df <- as.data.frame(rawBase$dataRAW)
+  if(nrow(df)==0L) return(FALSE)
 
   # load all XRD data
   for(ID in df$ID) {

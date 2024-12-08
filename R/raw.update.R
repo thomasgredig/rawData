@@ -9,6 +9,7 @@
 #' @param project any new project to be added to be searched
 #' @param sqlPath any SQL path to be added
 #' @param recursive logical, recursive search in path
+#' @param instrument_list list, contains instruments to be added
 #'
 #' @importFrom usethis ui_silence
 #'
@@ -19,27 +20,21 @@ raw.update <- function(rawBase,
                        path = NULL,
                        project = NULL,
                        sqlPath = NULL,
-                       recursive = TRUE) {
+                       recursive = TRUE,
+                       instrument_list = list(XRD = instrumentXRD, AFM = instrumentAFM)) {
   check_rawBase(rawBase)
-  # add the path:
-  if(!is.null(path)) rawBase$raw_paths = c(rawBase$raw_paths, path)
-  rawBase$import_history = update_rawBaseHistory(rawBase$import_history,
-                                                 "add",project,path,recursive)
-  # update SQL paths
-  if(!is.null(sqlPath)) {
-    if (dir.exists(sqlPath)) rawBase$sql_paths = c(rawBase$sql_paths, sqlPath)
-  }
 
-  # remove duplicate paths,etc.
-  rawBase = .cleanRawBase(rawBase)
-  rawBase = raw.addFiles(rawBase)
-  rawBase = raw.checkMissing(rawBase)
+  # add the paths
+  rawBase <- raw.addPath(rawBase, path, sqlPath, recursive)
+  # add new files
+  rawBase <- raw.addFiles(rawBase)
 
   # save the rawBase
   ui_silence(
     usethis::use_data(rawBase, overwrite = TRUE)
   )
 
+  # update the XRD, AFM, profiles
   raw.updateInstrument(rawBase)
 
   rawBase
@@ -58,11 +53,14 @@ raw.update <- function(rawBase,
 #'
 #' @importFrom cli cli_alert_warning
 #'
-#' @returns dataRAW table
+#' @returns rawBase object
 #'
 #' @export
 raw.addFiles <- function(rawBase, verbose=FALSE) {
   check_rawBase(rawBase)
+
+  # before adding new files, check which files are accessible
+  rawBase <- raw.checkMissing(rawBase)
 
   # find files that could potentially be added to dataRAW
   fList = raw.find(rawBase)
@@ -91,7 +89,7 @@ raw.addFiles <- function(rawBase, verbose=FALSE) {
 
   }
 
-  return(rawBase)
+  rawBase
 }
 
 

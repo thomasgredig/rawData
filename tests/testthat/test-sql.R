@@ -19,7 +19,7 @@ test_that("SQL database location", {
 
   # expect DB not to be found anymore
   expect_true(!file.exists(raw.getDatabase(rawBase)))
-  rawBase <- raw.update(rawBase, sqlPath = file.path(dirname(sqlfile),newSQLdir))
+  rawBase <- raw.update(rawBase, sqlPath = file.path(dirname(sqlfile), newSQLdir))
   # DB is found again
   expect_true(file.exists(raw.getDatabase(rawBase)))
 

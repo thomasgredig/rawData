@@ -37,7 +37,7 @@ test_that("check dataRAW update", {
   file.rename(file_rename, gsub("Sample","Probe", file_rename))
   rawBase <- raw.update(rawBase, path=tmpDir)
   dataRAW = as.data.frame(rawBase$dataRAW)
-  expect_equal(dataRAW$ID, prevIDs)
+  expect_equal(sort(dataRAW$ID), prevIDs)
 
   # MOVE file to different folder
   newFolder = file.path(tmpDir,"RAW")

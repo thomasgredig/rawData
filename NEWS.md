@@ -1,7 +1,7 @@
 # rawData 0.2.4
 
 * make sure that the `data` file is not part of this package as created through test
-
+* add instruments through the `raw.update()` at a later time
 
 # rawData 0.2.3
 

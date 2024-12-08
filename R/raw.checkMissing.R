@@ -5,7 +5,7 @@
 #'
 #' @export
 raw.checkMissing <- function(rawBase) {
-  if (!is(rawBase,"rawBase")) stop("rawBase oject required.")
+  check_rawBase(rawBase)
 
   dataRAW = as.data.frame(rawBase$dataRAW)
   IDs = dataRAW$ID

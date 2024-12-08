@@ -14,6 +14,18 @@ rawBase <- raw.init("spinPc", instrument_list=
                       list(XRD=instrumentXRD, AFM=instrumentAFM)) 
 ```
 
+## Instruments
+
+The `rawBase` object contains information about all files in the project including unique CRC; this ensures that if files are moved between folders or renamed, there is a consistent and unique `ID` associated with that file from that project.
+
+The content from the files can also be stored separately, then direct access to the files is not needed; since data is stored differently, there is an instrument function that translates the content from the instrument into a table or data frame that is stored as an `.rda` file. Several functions are provided that can translate instrument data:
+
+-   **instrumentXRD**: for XRD data files from rigaku based on `rigakuR`
+
+-   **instrumentAFM**: for AFM data files from different instruments, based on `nanoAFMr`
+
+The instrument is added via `raw.update()`. The function `raw.updateInstrument` calls all instrument functions and updates the data.
+
 ## Scenario
 
 After creating a new package `dataSpin` using the template `dataProjectTemplate`, you might want to add RAW data files into that package and create a variable `dataRAW`.
