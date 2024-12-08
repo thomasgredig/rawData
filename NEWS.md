@@ -1,3 +1,8 @@
+# rawData 0.2.4
+
+* make sure that the `data` file is not part of this package as created through test
+
+
 # rawData 0.2.3
 
 * update SQL database version, if needed

@@ -47,8 +47,11 @@ NULL
   if (interactive()) {
     # prompt for path
     path <- readline(prompt = str)
+    # clean path if needed
+    path <- gsub("^'|'$", "", path)
   } else {
     warning("Use interactive prompt to get path for prompt: ",str)
     path = "."
   }
+  path
 }

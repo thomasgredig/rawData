@@ -69,13 +69,15 @@ raw.addFiles <- function(rawBase, verbose=FALSE) {
 
   # Quit if no files are found.
   if (length(fList)==0) {
-    cli_alert_warning("No RAW data files are found in these folders; check file naming conventions.")
+    cli_alert_warning("No RAW data files are found in these folders.")
+    cli_alert_warning("Check file naming conventions.")
+    cli_alert_warning("File names must include project name: _",rawBase$project_name,"_")
     return(rawBase)
   }
 
-
   startID = 7
   new_dataRAW = create_dataRAW(startID, rawBase$raw_paths, fList)
+
   if (is.null(rawBase$dataRAW)) {
     rawBase$dataRAW = new_dataRAW
   } else {

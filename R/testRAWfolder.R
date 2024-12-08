@@ -6,8 +6,8 @@
 #' @examples
 #' dir(get_test_RAW_folder(2,"spinPc"))
 #' @export
-get_test_RAW_folder <- function(n, projectName) {
-  tmpDir = tempdir()
+get_test_RAW_folder <- function(n, projectName, recreate=FALSE) {
+  tmpDir = tempdir(check = recreate)
 
   for(i in 1:n) {
     year = as.character(floor(runif(1,2010,2024.9)))

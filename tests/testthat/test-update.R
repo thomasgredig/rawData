@@ -1,7 +1,7 @@
 test_that("check dataRAW update", {
   projectName = paste0("spin",floor(runif(1,0,100)))
   # create a folder with 10 RAW data files
-  tmpDir = get_test_RAW_folder(10, projectName)
+  tmpDir = get_test_RAW_folder(10, projectName, recreate=TRUE)
 
   # check INITIALIZATION
   rawBase <- raw.init(projectName, paths=tmpDir, sqlPaths=tmpDir, recursive=FALSE, verbose=FALSE)
@@ -18,7 +18,8 @@ test_that("check dataRAW update", {
   tmpDir = get_test_RAW_folder(2, projectName)
   rawBase <- raw.update(rawBase, path=tmpDir)
   dataRAW = as.data.frame(rawBase$dataRAW)
-  expect_equal(dataRAW$ID, 7:18)
+  expect_equal(length(dataRAW$ID), 12)
+  prevIDs = dataRAW$ID
 
   # check DELETING FILES
   # 2 files should appear now as missing
@@ -28,7 +29,7 @@ test_that("check dataRAW update", {
   expect_true(file.remove(file_delete))
   rawBase <- raw.update(rawBase, path=tmpDir)
   dataRAW = as.data.frame(rawBase$dataRAW)
-  expect_equal(dataRAW$ID, 7:18)
+  expect_equal(dataRAW$ID, prevIDs)
   expect_equal(length(which(dataRAW$missing==TRUE)),2)
 
   # RENAME a file
@@ -36,7 +37,7 @@ test_that("check dataRAW update", {
   file.rename(file_rename, gsub("Sample","Probe", file_rename))
   rawBase <- raw.update(rawBase, path=tmpDir)
   dataRAW = as.data.frame(rawBase$dataRAW)
-  expect_equal(dataRAW$ID, 7:18)
+  expect_equal(dataRAW$ID, prevIDs)
 
   # MOVE file to different folder
   newFolder = file.path(tmpDir,"RAW")
@@ -46,7 +47,7 @@ test_that("check dataRAW update", {
   file.rename(file_move, file_move_new)
   rawBase <- raw.update(rawBase, path=newFolder)
   dataRAW = as.data.frame(rawBase$dataRAW)
-  expect_equal(dataRAW$ID, 7:18)
+  expect_equal(sort(dataRAW$ID), prevIDs)
 
   # delete database
   file.remove(raw.getDatabase(rawBase))

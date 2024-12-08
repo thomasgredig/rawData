@@ -119,21 +119,49 @@ as.data.frame.dataRAW <- function(d,...) {
 #' @export
 rbind.dataRAW <- function(d1, d2) {
   # both objects should be dataRAW
-  if (!is(d1,"dataRAW")) stop("dataRAW 1 object required.")
-  if (!is(d2,"dataRAW")) stop("dataRAW 2 object required.")
+  # if (!is(d1,"dataRAW")) stop("dataRAW 1 object required.")
+  # if (!is(d2,"dataRAW")) stop("dataRAW 2 object required.")
 
-  df1 = as.data.frame(d1)
+  # Convert dataRAW to dataframe
   df2 = as.data.frame(d2)
-  m <- which(df2$crc %in% df1$crc)
-  df_dupl = df2[m,]
-  if(length(m)>0) df2 <- df2[-m,]
-
   if (nrow(df2)==0) return(d1)
+  df1 = as.data.frame(d1)
+  if (nrow(df1)==0) return(d2)
 
+  # df1 should not have any duplicates(!)
+  if(length(which(duplicated(df1$crc)))>0L) warning("dataRAW frame 1 should not have duplicates.")
+
+  # update IDs
   next_ID = max(df1$ID)
   df2$ID = 1:nrow(df2) + next_ID
-  df3 = rbind(df1,df2)
 
+  # find duplicates
+  df3 = rbind(df1,df2)
+  m <- which(duplicated(df3$crc)==TRUE)
+
+  c_del = c()
+  if (length(m)>0) {
+    # iterate through all duplicates
+    for(num in m) {
+      m2 <- which(df3$crc==df3$crc[num])
+      df3$ID[m2] = min(df3$ID[m2])  # IMPORTANT: change IDs
+      # keep only the first none missing file with that CRC
+      m2_keep = which(df3$missing[m2]==FALSE)
+      if(length(m2_keep)>0L) {
+        m_del = m2[-m2_keep[1]]
+        c_del = c(c_del, m_del)
+      }
+    }
+  }
+
+  # remove duplicates
+  c_del = unique(c_del)
+  if(length(c_del)>0L) {
+    # cat("Deleting ",length(c_del),"files.\n")
+    df3 <- df3[-c_del,]
+  }
+
+  # Convert dataframe to dataRAW
   class(df3) <- "dataRAW"
   df3
 }
