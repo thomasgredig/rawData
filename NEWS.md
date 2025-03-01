@@ -1,3 +1,7 @@
+# rawData 0.2.5
+
+* allow extensions in `raw.init()`, such that files without the project name can be loaded
+
 # rawData 0.2.4
 
 * make sure that the `data` file is not part of this package as created through test

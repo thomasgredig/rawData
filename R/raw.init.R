@@ -15,6 +15,7 @@
 #' @param recursive logical weather to search paths resursively
 #' @param instrument_list list with instruments to be updated
 #' @param legacyRAWIDfile filename with RAW-ID.csv data file (legacy code)
+#' @param extensions list with file extensions (does not require project name)
 #' @param ... parameters for raw.addFiles, such as verbose
 #'
 #' @return rawBase object
@@ -29,6 +30,7 @@ raw.init <- function(projectName,
                      recursive=TRUE,
                      instrument_list = list(XRD = instrumentXRD, AFM = instrumentAFM),
                      legacyRAWIDfile="",
+                     extensions = c(),
                      ...) {
   # create a rawBase object with the information
   rawBase = create_rawBase(projectName,
@@ -36,7 +38,8 @@ raw.init <- function(projectName,
                            sqlPaths = sqlPaths,
                            recursive = recursive,
                            instrument_list = instrument_list,
-                           legacyRAWIDfile = legacyRAWIDfile)
+                           legacyRAWIDfile = legacyRAWIDfile,
+                           extensions = extensions)
 
   # import legacy file IDs first
   rawBase = raw.importRAWID(rawBase)

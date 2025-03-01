@@ -13,22 +13,49 @@
 #' @param recursive logical, determines whether path is searched recursively.
 #'
 #' @returns vector with file list that includes paths
-#'
+#' @importFrom cli cli_alert_warning cli_alert_info
 #' @export
 raw.find <- function(rawBase, recursive=TRUE) {
+
+  # find files with specified extensions
+  find_files_with_extensions <- function(pfad, extensions) {
+    cli_alert_info(paste("Loading extensions:",paste(extensions, collapse = "|")))
+    # Create a pattern to match the extensions
+    pattern <- paste0("\\.(", paste(extensions, collapse = "|"), ")$")
+
+    # List files in the directory matching the pattern
+    dir(path = pfad,
+        pattern = pattern,
+        ignore.case = TRUE,
+        include.dirs = TRUE,
+        full.names = TRUE,
+        recursive = TRUE)
+  }
+
   if (!is(rawBase,"rawBase")) stop("rawBase object required.")
 
   df_history = rawBase$import_history
   fList = c()
+  fList_ext = c()
 
-  if(is.null(df_history)) return(fList)
+  if(is.null(df_history)) {
+    cli_alert_warning("No history in rawBase object.")
+    return(fList)
+  }
 
   for(i in 1:nrow(df_history)) {
     path = df_history$path[i]
+    # cli_alert_info(paste("Searching path:",path))
+
     projectName = df_history$project[i]
+    # cli_alert_info(paste("Project:",projectName))
+
     recursive = df_history$recursive[i]
 
-    if (!dir.exists(path)) next
+    if (!dir.exists(path)) {
+      cli_alert_info(paste0("Path not found: <<",path,">>."))
+      next
+    }
 
     fList = c(fList, dir(path,
                          pattern = paste0(".*20\\d{6}[_-]",projectName,"[_-].*"),
@@ -36,9 +63,13 @@ raw.find <- function(rawBase, recursive=TRUE) {
                          include.dirs = TRUE,
                          full.names = TRUE,
                          recursive = recursive))
+
+    # if there are any extensions, then add files with those extensions
+    if (length(rawBase$ext) >0 )
+      fList_ext = c(fList_ext, find_files_with_extensions(path, rawBase$ext) )
   }
 
-  fList
+  c(fList, fList_ext)
 }
 
 NULL

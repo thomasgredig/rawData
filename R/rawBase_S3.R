@@ -7,6 +7,7 @@
 #' @param sqlPaths paths for location of SQL database
 #' @param instrument_list vector with instruments to be updated
 #' @param legacyRAWIDfile full path and file name of RAW-ID.csv file
+#' @param ext any extensions as a list
 #'
 #' @importFrom here here
 #'
@@ -17,7 +18,8 @@ create_rawBase <- function(projectName,
                            recursive = TRUE,
                            sqlPaths = NULL,
                            instrument_list = NULL,
-                           legacyRAWIDfile = NULL) {
+                           legacyRAWIDfile = NULL,
+                           extensions = c()) {
   .getToken <- function() { as.numeric(Sys.time()) }
 
   if (is.null(pkgName)) pkgName = basename(here::here())
@@ -60,6 +62,7 @@ create_rawBase <- function(projectName,
       recursive = recursive),
     sql_paths = sqlPaths,
     legacyRAWIDfile = legacyRAWIDfile,
+    extensions = extensions,
     token = .getToken()
   )
 
@@ -84,6 +87,7 @@ print.rawBase <- function(rawBase, ...) {
   cat("SQL paths .......:",rawBase$sql_paths[1],"\n")
   cat("Instruments .....:",paste(names(rawBase$instruments), collapse=","),"\n")
   cat("RAW data files ..:",nrow(dataRAW),"\n")
+  cat("Extensions ......:",paste0(rawBase$extensions, collapse = ","),"\n")
 
   if (file.exists(raw.getDatabase(rawBase))) {
     cli_alert_success("Success finding SQL database.")
