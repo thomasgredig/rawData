@@ -21,8 +21,17 @@ raw.update <- function(rawBase,
                        project = NULL,
                        sqlPath = NULL,
                        recursive = TRUE,
-                       instrument_list = list(XRD = instrumentXRD, AFM = instrumentAFM)) {
+                       instrument_list = list(XRD = instrumentXRD, AFM = instrumentAFM),
+                       extensions = c()) {
   check_rawBase(rawBase)
+  # update instruments
+  if (length(list())>0) {
+    rawBase <- raw.addInstrument(rawBase, instrument_list)
+  }
+  # update extensions
+  if (length(extensions)>0) {
+    rawBase$extensions = extensions
+  }
 
   # add the paths
   rawBase <- raw.addPath(rawBase, path, sqlPath, recursive)

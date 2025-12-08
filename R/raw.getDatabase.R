@@ -27,69 +27,111 @@
 raw.getDatabase <- function(rawBase, verbose = FALSE) {
   check_rawBase(rawBase)
 
-  dbFolderListFile <- rawBase$sql_paths
-  dbFile <- NULL
-
+  # Check that the package is installed
   if (!nzchar(system.file(package = rawBase$package_name))) {
-    if (verbose) cat("Package", rawBase$package_name,"not installed.")
-    return (NULL)
-  }
-  dbFileName = .getDatabaseFileName(rawBase$package_name)
-  if (verbose) cat("SQL Database filename:", dbFileName,"\n")
-
-  # not all search paths might exists, so check which exists
-  dbSearchPaths = c()
-  for(dbFolder in rawBase$sql_paths) {
-    if (verbose) cat("Searching folder:", dbFolder,"\n")
-    if (dir.exists(dbFolder)) dbSearchPaths = c(dbSearchPaths, dbFolder)
-  }
-
-  if (verbose) cat("Searching", length(dbSearchPaths), "folders.\n")
-  if (length(dbSearchPaths)==0) {
-    warning("No path for SQL repository found.")
-    return("")
-  }
-
-  dbFile = ""
-  for(pfad in dbSearchPaths) {
-    dbFileCheck <- file.path(pfad,dbFileName)
-    if (file.exists(dbFileCheck)) { dbFile <- dbFileCheck } else {
-      dbFileNameAlternative = dir(pfad, pattern=paste0(rawBase$package_name,'.*sqlite$'))
-      if (length(dbFileNameAlternative)>0) dbFile <- file.path(pfad, dbFileNameAlternative[1])
-    }
+    if (verbose) cat("Package", rawBase$package_name, "not installed.\n")
+    return(NULL)
   }
 
   if (verbose) {
-    if (file.exists(dbFile)) cat("SQL DB size:", round(file.info(dbFile)$size/1024/1024,1),"MB\n")
+    dbFileNamePattern <- .getDatabaseFileName(rawBase$package_name, pattern = TRUE)
+    cat("Searching for SQL databases matching:", dbFileNamePattern, "\n")
+  }
+  # Collect all candidate database files across all sql_paths
+  # and pick the one with the highest version
+  dbFile <- .getDatabaseName(rawBase, include_oldVersions = TRUE, verbose=verbose)
+
+  if (length(dbFile) == 0L || !nzchar(dbFile[1])) {
+    warning("No SQL database file found in any 'sql_paths'.")
+    return("")
+  }
+
+  dbFile <- dbFile[1]
+
+  if (verbose && file.exists(dbFile)) {
+    cat("Using SQL database:", dbFile, "\n")
+    cat(
+      "SQL DB size:",
+      round(file.info(dbFile)$size / 1024 / 1024, 1),
+      "MB\n"
+    )
   }
 
   dbFile
 }
 
+#
+# raw.getDatabase <- function(rawBase, verbose = FALSE) {
+#   check_rawBase(rawBase)
+#
+#   dbFolderListFile <- rawBase$sql_paths
+#   dbFile <- NULL
+#
+#   if (!nzchar(system.file(package = rawBase$package_name))) {
+#     if (verbose) cat("Package", rawBase$package_name,"not installed.")
+#     return (NULL)
+#   }
+#   dbFileName = .getDatabaseFileName(rawBase$package_name)
+#   if (verbose) cat("SQL Database filename:", dbFileName,"\n")
+#
+#   # not all search paths might exists, so check which exists
+#   dbSearchPaths = c()
+#   for(dbFolder in rawBase$sql_paths) {
+#     if (verbose) cat("Searching folder:", dbFolder,"\n")
+#     if (dir.exists(dbFolder)) dbSearchPaths = c(dbSearchPaths, dbFolder)
+#   }
+#
+#   if (verbose) cat("Searching", length(dbSearchPaths), "folders.\n")
+#   if (length(dbSearchPaths)==0) {
+#     warning("No path for SQL repository found.")
+#     return("")
+#   }
+#
+#   dbFile = ""
+#   for(pfad in dbSearchPaths) {
+#     dbFileCheck <- file.path(pfad,dbFileName)
+#     if (file.exists(dbFileCheck)) { dbFile <- dbFileCheck } else {
+#       dbFileNameAlternative = dir(pfad, pattern=paste0(rawBase$package_name,'.*sqlite$'))
+#       if (length(dbFileNameAlternative)>0) dbFile <- file.path(pfad, dbFileNameAlternative[1])
+#     }
+#   }
+#
+#   if (verbose) {
+#     if (file.exists(dbFile)) cat("SQL DB size:", round(file.info(dbFile)$size/1024/1024,1),"MB\n")
+#   }
+#
+#   dbFile
+# }
+
 # Helper functions
 NULL
 
 # if include_oldVersions is TRUE, then other versions of the database are also returned
-.getDatabaseName <- function(rawBase, include_oldVersions = FALSE) {
-  sqlPath = ""
+.getDatabaseName <- function(rawBase, include_oldVersions = TRUE, verbose=FALSE) {
   sqlFile = .getDatabaseFileName(rawBase$package_name)
   sqlPattern = .getDatabaseFileName(rawBase$package_name, pattern=TRUE)
   sql_files = c()
 
   for(sqlPath in rawBase$sql_paths) {
+    if (verbose) cat("Searching sqlite DB in path:",sqlPath,"\n")
     if(dir.exists(sqlPath)) {
       # check for exact match
+      if (verbose) cat("Looking for:", file.path(sqlPath,sqlFile),"\n")
       if (file.exists(file.path(sqlPath,sqlFile))) {
         sql_files = c(sql_files, file.path(sqlPath, sqlFile))
       } else {
         if (include_oldVersions) {
+          if (verbose) cat("Looking for older database versions:", sqlPattern,"in",sqlPath,"\n")
           # check for other versions in the same folder
-          fList = dir(sqlPath, pattern = sqlPattern)
+          fList = dir(path = sqlPath, pattern="sqlite$")
+          fList = fList[grepl(rawBase$package_name, fList)]
           if (length(fList) != 0L) {
             sql_files = c(sql_files, file.path(sqlPath, fList))
           }
         }
       }
+    } else {
+      if (verbose) cat("SQL path",sqlPath,"not found.\n")
     }
   }
 

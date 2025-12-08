@@ -1,3 +1,7 @@
+# rawData 0.2.6
+
+* create `raw.info()`, which returns information about the `rawBase`
+
 # rawData 0.2.5
 
 * allow extensions in `raw.init()`, such that files without the project name can be loaded
