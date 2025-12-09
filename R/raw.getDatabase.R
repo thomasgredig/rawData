@@ -136,6 +136,7 @@ NULL
   }
 
   if(length(sql_files)>0L) { sql_files= get_highest_version_file(sql_files) }
+  if (is.null(sql_files)) sql_files=c("")
   sql_files
 }
 

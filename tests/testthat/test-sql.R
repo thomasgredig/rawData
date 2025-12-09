@@ -18,7 +18,11 @@ test_that("SQL database location", {
   expect_true(MOVED)
 
   # expect DB not to be found anymore
-  expect_true(!file.exists(raw.getDatabase(rawBase)))
+  #expect_true(!file.exists(raw.getDatabase(rawBase)))
+  expect_warning(
+    expect_equal(raw.getDatabase(rawBase), ""),
+    regexp = ".*"
+  )
   rawBase <- raw.update(rawBase, sqlPath = file.path(dirname(sqlfile), newSQLdir))
   # DB is found again
   expect_true(file.exists(raw.getDatabase(rawBase)))
@@ -43,6 +47,7 @@ test_that("update version", {
   expect_true(file.rename(from = sqlfile, to =old_sqlfile))
   expect_true(file.exists(old_sqlfile))
   # initialize again; should recognize old SQL file and update version back.
+  #.getDatabaseName(rawBase, include_oldVersions = FALSE, verbose=TRUE)
   rawBase <- raw.init(projectName,
                       paths=tmpDir,
                       sqlPaths=tmpDir,
