@@ -52,9 +52,13 @@ sql_database_exists <- function(rawBase) {
   file.exists(dbName)
 }
 
+# update the database name if needed
 update_databaseName <- function(rawBase) {
+  # find the latest SQL version
   dbOldVersion = .getDatabaseName(rawBase, include_oldVersions = TRUE)
-  dbNewVersion = .getDatabaseName(rawBase, include_oldVersions = FALSE)
+  # find the current name of the SQL database
+  dbNewVersion = file.path(dirname(dbOldVersion),.getDatabaseFileName(rawBase$package_name))
+
   if (dbOldVersion != dbNewVersion) {
     # update old version to new version
     dbNewVersion = file.path(dirname(dbOldVersion), basename(dbNewVersion))

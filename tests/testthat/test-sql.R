@@ -32,7 +32,7 @@ test_that("SQL database location", {
 })
 
 
-test_that("update version", {
+test_that("update DB version", {
   num = floor(runif(1,101,200))
   projectName = paste0("sql",num)
   tmpDir = get_test_RAW_folder(2, projectName)
