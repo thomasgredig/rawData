@@ -79,18 +79,20 @@ create_rawBase <- function(projectName,
 #' @importFrom cli cli_alert_danger cli_alert_success
 #' @export
 print.rawBase <- function(rawBase, ...) {
+  dbName = .getDatabaseName(rawBase)
   dataRAW = as.data.frame(rawBase$dataRAW)
   cat("Project .........:",rawBase$project_name,"\n")
   cat("Package .........:",rawBase$package_name,"\n")
-  cat("RAW paths .......:",rawBase$raw_paths[1],"\n")
+  cat("RAW paths .......:",paste(rawBase$raw_paths,collapse=" :: "),"\n")
   cat("Project names ...:",unique(rawBase$import_history$project),"\n")
-  cat("SQL paths .......:",rawBase$sql_paths[1],"\n")
+  cat("SQL paths .......:",paste(rawBase$sql_paths,collapse=" :: "),"\n")
+  cat("SQL database ....:",dbName,"\n")
   cat("Instruments .....:",paste(names(rawBase$instruments), collapse=","),"\n")
-  cat("RAW data files ..:",nrow(dataRAW),"\n")
+  cat("RAW data files ..:",nrow(dataRAW)," (",length(which(rawBase$dataRAW$missing==TRUE)),"missing)\n")
   cat("Extensions ......:",paste0(rawBase$extensions, collapse = ","),"\n")
 
   if (file.exists(raw.getDatabase(rawBase))) {
-    cli_alert_success("Success finding SQL database.")
+    cli::cli_alert_success("Success finding SQL database.")
   } else {
     cli::cli_alert_danger("Failed finding SQL database.")
   }

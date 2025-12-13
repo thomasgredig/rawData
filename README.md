@@ -49,6 +49,9 @@ d <- as.data.frame(rawBase$dataRAW) # data frame with file information
 # later you might want to update your database
 tmpDir = get_test_RAW_folder(2, "spinPc") # new files
 rawBase <- raw.update(rawBase)
+
+# save 
+usethis::use_data(rawBase, overwrite = TRUE)
 ```
 
 ## Database

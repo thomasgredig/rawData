@@ -10,44 +10,64 @@
 #' @param sqlPath any SQL path to be added
 #' @param recursive logical, recursive search in path
 #' @param instrument_list list, contains instruments to be added
+#' @param forceUpdateMissing if TRUE, all missing files are checked for folder update, useful for legacy RAWID files
 #'
 #' @importFrom usethis ui_silence
 #'
 #' @returns rawBase object
 #'
 #' @export
-raw.update <- function(rawBase,
-                       path = NULL,
-                       project = NULL,
-                       sqlPath = NULL,
-                       recursive = TRUE,
-                       instrument_list = list(XRD = instrumentXRD, AFM = instrumentAFM),
-                       extensions = c()) {
+#'
+raw.update <- function(
+    rawBase,
+    path = NULL,
+    project = NULL,  # kept for API compatibility, though not used
+    sqlPath = NULL,
+    recursive = TRUE,
+    instrument_list = list(XRD = instrumentXRD, AFM = instrumentAFM),
+    extensions = character(),
+    forceUpdateMissing = FALSE
+) {
+  # Validate input -----------------------------------------------------------
   check_rawBase(rawBase)
-  # update instruments
-  if (length(list())>0) {
-    rawBase <- raw.addInstrument(rawBase, instrument_list)
-  }
-  # update extensions
-  if (length(extensions)>0) {
-    rawBase$extensions = extensions
+
+  # Update instruments -------------------------------------------------------
+  if (length(instrument_list) > 0L) {
+    rawBase <- raw.addInstrument(
+      rawBase,
+      instrument_list = instrument_list
+    )
   }
 
-  # add the paths
-  rawBase <- raw.addPath(rawBase, path, sqlPath, recursive)
-  # add new files
+  # Update extensions --------------------------------------------------------
+  if (length(extensions) > 0L) {
+    rawBase$extensions <- extensions
+  }
+
+  # Add paths and files ------------------------------------------------------
+  rawBase <- raw.addPath(
+    rawBase,
+    path     = path,
+    sqlPath  = sqlPath,
+    recursive = recursive
+  )
+
   rawBase <- raw.addFiles(rawBase)
 
-  # save the rawBase
+  if (forceUpdateMissing) { rawBase <- raw.updateMissingFilePaths(rawBase) }
+
+  # Persist updated object ---------------------------------------------------
   ui_silence(
     usethis::use_data(rawBase, overwrite = TRUE)
   )
 
-  # update the XRD, AFM, profiles
+  # Update instrument-specific data -----------------------------------------
   raw.updateInstrument(rawBase)
 
+  # Return updated rawBase --------------------------------------------------
   rawBase
 }
+
 
 
 #' Add dataRAW with new files

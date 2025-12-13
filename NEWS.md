@@ -1,6 +1,7 @@
-# rawData 0.2.6
+# rawData 0.2.7
 
-* create `raw.info()`, which returns information about the `rawBase`
+* add `raw.getCRC`
+* support legacy RAW ID update through `raw.update`
 
 # rawData 0.2.5
 

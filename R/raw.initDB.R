@@ -23,7 +23,7 @@ raw.initDB <- function(rawBase, verbose=TRUE) {
   check_rawBase(rawBase) # make sure, it is a valid object
 
   if (sql_database_exists(rawBase)) {
-    cli_inform("SQL database already exists; no new database generated, updated if needed.")
+    cli_inform("SQL database already exists; no new database generated, trying to update version.")
     # if needed, update the version in the name of the database.
     update_databaseName(rawBase)
     return(rawBase)
@@ -64,6 +64,10 @@ update_databaseName <- function(rawBase) {
     dbNewVersion = file.path(dirname(dbOldVersion), basename(dbNewVersion))
     file.rename(from=dbOldVersion,
                 to = dbNewVersion)
+    cli_inform(paste("Old database:", dbOldVersion))
+    cli_inform(paste("Updating to new version:", dbNewVersion))
+  } else {
+    cli_inform(paste("Already on latest database:", dbNewVersion))
   }
 }
 

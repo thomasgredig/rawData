@@ -18,6 +18,10 @@ raw.getMD5 <- function(filename, num=6) {
   substr(md5sum(filename),1,num)
 }
 
+#' Returns the CRC for filename
+#' @export
+raw.getCRC <- function(filename) { .getCRC(filename) }
+
 #' returns the MD5sum of a filename
 #'
 #' @param filename filename

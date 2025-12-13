@@ -13,8 +13,7 @@ raw.checkMissing <- function(rawBase) {
   for(ID in IDs) {
     m <- which(ID == IDs)
     filename = raw.getFilename(rawBase,ID)
-    missing = !file.exists(filename)
-    dataRAW$missing[m] = missing
+    dataRAW$missing[m] = !file.exists(filename)
   }
 
   class(dataRAW) = "dataRAW"

@@ -45,10 +45,10 @@ raw.find <- function(rawBase, recursive=TRUE) {
 
   for(i in 1:nrow(df_history)) {
     path = df_history$path[i]
-    # cli_alert_info(paste("Searching path:",path))
+    cli_alert_info(paste("Searching path:",path))
 
     projectName = df_history$project[i]
-    # cli_alert_info(paste("Project:",projectName))
+    cli_alert_info(paste("Project:",projectName))
 
     recursive = df_history$recursive[i]
 
