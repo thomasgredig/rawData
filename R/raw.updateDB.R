@@ -22,8 +22,3 @@ raw.updateDB <- function(rawBase, quiet=FALSE) {
   # return updated rawBase
   rawBase
 }
-rawBase$import_history = update_rawBaseHistory(rawBase$import_history,
-                                               "add",
-                                               rawBase$project,
-                                               path,
-                                               recursive)
