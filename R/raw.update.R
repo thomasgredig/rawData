@@ -26,7 +26,8 @@ raw.update <- function(
     recursive = TRUE,
     instrument_list = list(XRD = instrumentXRD, AFM = instrumentAFM),
     extensions = character(),
-    forceUpdateMissing = FALSE
+    forceUpdateMissing = FALSE,
+    quiet=FALSE
 ) {
   # Validate input -----------------------------------------------------------
   check_rawBase(rawBase)
@@ -54,15 +55,20 @@ raw.update <- function(
 
   rawBase <- raw.addFiles(rawBase)
 
+  # check whether the reference folder has changed and then update missing files
   if (forceUpdateMissing) { rawBase <- raw.updateMissingFilePaths(rawBase) }
+
+  # Update SQL databse
+  rawBase = raw.updateDB(rawBase)
+
+  # Update instrument-specific data -----------------------------------------
+  # will update instrument specific files
+  rawBase = raw.updateInstrument(rawBase)
 
   # Persist updated object ---------------------------------------------------
   ui_silence(
     usethis::use_data(rawBase, overwrite = TRUE)
   )
-
-  # Update instrument-specific data -----------------------------------------
-  raw.updateInstrument(rawBase)
 
   # Return updated rawBase --------------------------------------------------
   rawBase
@@ -92,7 +98,7 @@ raw.addFiles <- function(rawBase, verbose=FALSE) {
   rawBase <- raw.checkMissing(rawBase)
 
   # find files that could potentially be added to dataRAW
-  fList = raw.find(rawBase)
+  fList = raw.find(rawBase, quiet=TRUE)
 
   # Quit if no files are found.
   if (length(fList)==0) {
@@ -207,4 +213,5 @@ check_rawBase <-function(rawBase) {
   if(!inherits(rawBase,"rawBase")) {
     stop("Requires a rawBase object.")
   }
+  TRUE
 }

@@ -4,7 +4,7 @@ test_that("check dataRAW update", {
   tmpDir = get_test_RAW_folder(10, projectName, recreate=TRUE)
 
   # check INITIALIZATION
-  rawBase <- raw.init(projectName, paths=tmpDir, sqlPaths=tmpDir, recursive=FALSE, verbose=FALSE)
+  rawBase <- raw.init(projectName, paths=tmpDir, sqlPaths=tmpDir, recursive=FALSE, verbose=FALSE, quiet=TRUE)
   dataRAW = as.data.frame(rawBase$dataRAW)
   expect_equal(dataRAW$ID, 7:16)
 
@@ -16,7 +16,7 @@ test_that("check dataRAW update", {
 
   # check ADDING files
   tmpDir = get_test_RAW_folder(2, projectName)
-  rawBase <- raw.update(rawBase, path=tmpDir)
+  rawBase <- raw.update(rawBase, path=tmpDir, quiet=TRUE)
   dataRAW = as.data.frame(rawBase$dataRAW)
   expect_equal(length(dataRAW$ID), 12)
   prevIDs = dataRAW$ID
@@ -27,7 +27,7 @@ test_that("check dataRAW update", {
   expect_true(file.remove(file_delete))
   file_delete = dir(tmpDir, pattern=projectName, full.names=TRUE)[3]
   expect_true(file.remove(file_delete))
-  rawBase <- raw.update(rawBase, path=tmpDir)
+  rawBase <- raw.update(rawBase, path=tmpDir, quiet=TRUE)
   dataRAW = as.data.frame(rawBase$dataRAW)
   expect_equal(dataRAW$ID, prevIDs)
   expect_equal(length(which(dataRAW$missing==TRUE)),2)
@@ -35,7 +35,7 @@ test_that("check dataRAW update", {
   # RENAME a file
   file_rename = dir(tmpDir, pattern=projectName, full.names=TRUE)[5]
   file.rename(file_rename, gsub("Sample","Probe", file_rename))
-  rawBase <- raw.update(rawBase, path=tmpDir)
+  rawBase <- raw.update(rawBase, path=tmpDir, quiet=TRUE)
   dataRAW = as.data.frame(rawBase$dataRAW)
   expect_equal(sort(dataRAW$ID), prevIDs)
 
@@ -45,11 +45,42 @@ test_that("check dataRAW update", {
   file_move = dir(tmpDir, pattern=projectName, full.names=TRUE)[6]
   file_move_new = file.path(newFolder,basename(file_move))
   file.rename(file_move, file_move_new)
-  rawBase <- raw.update(rawBase, path=newFolder)
+  rawBase <- raw.update(rawBase, path=newFolder, quiet=TRUE)
   dataRAW = as.data.frame(rawBase$dataRAW)
   expect_equal(sort(dataRAW$ID), prevIDs)
 
   # delete database
   file.remove(raw.getDatabase(rawBase))
 })
+
+
+test_that("update DB", {
+  projectName = paste0("testDB",floor(runif(1,0,100)))
+  tmpDir = get_test_RAW_folder(10, projectName)
+
+  instrument_list = list(AFM = instrumentAFM)
+  rawBase <- raw.init(projectName,
+                      paths=tmpDir,
+                      sqlPaths=tmpDir,
+                      recursive=FALSE,
+                      instrument_list = instrument_list,
+                      verbose=FALSE, quiet=TRUE)
+  expect_true(is.null(check_rawBase(rawBase)))
+  expect_true(length(rawBase$sql_paths)>0L)
+
+  # make sure database is on current version
+  dbFile = .getDatabaseName(rawBase, include_oldVersions = FALSE)
+  expect_true(file.exists(dbFile))
+
+  # delete database
+  file.remove(raw.getDatabase(rawBase))
+
+  # update should re-create database
+  rawBase = raw.update(rawBase)
+  expect_true(file.exists(raw.getDatabase(rawBase)))
+
+  # delete database
+  file.remove(raw.getDatabase(rawBase))
+})
+
 

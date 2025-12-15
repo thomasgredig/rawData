@@ -1,3 +1,8 @@
+# rawData 0.2.8
+
+* Instruments return `rawBase`
+* Update SQL database, or create it with the previous information, if possible
+
 # rawData 0.2.7
 
 * add `raw.getCRC`

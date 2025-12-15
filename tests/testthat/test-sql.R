@@ -6,7 +6,7 @@ test_that("SQL database location", {
                       paths=tmpDir,
                       sqlPaths=tmpDir,
                       recursive=FALSE,
-                      verbose=FALSE)
+                      verbose=FALSE, quiet=TRUE)
   sqlfile = dir(tmpDir, pattern="lite$", full.names = TRUE)
   expect_true(file.exists(sqlfile))
 
@@ -40,7 +40,7 @@ test_that("update DB version", {
                       paths=tmpDir,
                       sqlPaths=tmpDir,
                       recursive=FALSE,
-                      verbose=FALSE)
+                      verbose=FALSE, quiet=TRUE)
   sqlfile = dir(tmpDir, pattern="lite$", full.names = TRUE)
   # change SQL to old version
   old_sqlfile = gsub("(.*)-\\d+\\.\\d+\\.\\d+\\.sqlite$","\\1-0.0.0.sqlite",sqlfile)
@@ -52,7 +52,7 @@ test_that("update DB version", {
                       paths=tmpDir,
                       sqlPaths=tmpDir,
                       recursive=FALSE,
-                      verbose=FALSE)
+                      verbose=FALSE, quiet=TRUE)
 
   expect_true(file.exists(sqlfile))
 

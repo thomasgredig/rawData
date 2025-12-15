@@ -50,13 +50,13 @@ raw.init <- function(projectName,
   # create the SQL database
   raw.initDB(rawBase, ...)
 
+  # update the XRD, AFM, profiles.
+  rawBase = raw.updateInstrument(rawBase)
+
   # save the rawBase
   ui_silence(
     usethis::use_data(rawBase, overwrite = TRUE)
   )
-
-  # update the XRD, AFM, profiles.
-  raw.updateInstrument(rawBase)
 
   rawBase
 }

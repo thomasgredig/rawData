@@ -3,7 +3,7 @@ test_that("find raw files", {
 
   rawBase=create_rawBase("spinPc", paths=tmpDir, sqlPaths=tmpDir)
 
-  s <- raw.find(rawBase)
+  s <- raw.find(rawBase, quiet=TRUE)
   expect_true(length(s) >= 2)
 
 })

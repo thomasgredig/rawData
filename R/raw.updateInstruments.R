@@ -10,14 +10,14 @@
 #'
 #' @export
 raw.updateInstrument <- function(rawBase) {
-  success = FALSE
-  if (is.null(rawBase$instruments)) return(success)
+  if (is.null(rawBase$instruments)) return(rawBase)
 
   for(func in names(rawBase$instruments)) {
+    cat("Calling",func,"instrument for update.\n")
     rawBase$instruments[[func]](rawBase)
-    success = TRUE
   }
 
-  success
+  # returns updated rawBase
+  rawBase
 }
 

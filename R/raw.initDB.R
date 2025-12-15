@@ -19,13 +19,13 @@
 #' @importFrom cli cli_inform
 #'
 #' @export
-raw.initDB <- function(rawBase, verbose=TRUE) {
+raw.initDB <- function(rawBase, verbose=TRUE, quiet=FALSE) {
   check_rawBase(rawBase) # make sure, it is a valid object
 
   if (sql_database_exists(rawBase)) {
-    cli_inform("SQL database already exists; no new database generated, trying to update version.")
+    if (!quiet) cli_inform("SQL database already exists; no new database generated, trying to update version.")
     # if needed, update the version in the name of the database.
-    update_databaseName(rawBase)
+    update_databaseName(rawBase, quiet=quiet)
     return(rawBase)
   }
 
@@ -53,7 +53,7 @@ sql_database_exists <- function(rawBase) {
 }
 
 # update the database name if needed
-update_databaseName <- function(rawBase) {
+update_databaseName <- function(rawBase, quiet=FALSE) {
   # find the latest SQL version
   dbOldVersion = .getDatabaseName(rawBase, include_oldVersions = TRUE)
   # find the current name of the SQL database
@@ -64,10 +64,10 @@ update_databaseName <- function(rawBase) {
     dbNewVersion = file.path(dirname(dbOldVersion), basename(dbNewVersion))
     file.rename(from=dbOldVersion,
                 to = dbNewVersion)
-    cli_inform(paste("Old database:", dbOldVersion))
-    cli_inform(paste("Updating to new version:", dbNewVersion))
+    if(!quiet) cli_inform(paste("Old database:", dbOldVersion))
+    if(!quiet) cli_inform(paste("Updating to new version:", dbNewVersion))
   } else {
-    cli_inform(paste("Already on latest database:", dbNewVersion))
+    if(!quiet) cli_inform(paste("Already on latest database:", dbNewVersion))
   }
 }
 

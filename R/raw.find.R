@@ -15,7 +15,7 @@
 #' @returns vector with file list that includes paths
 #' @importFrom cli cli_alert_warning cli_alert_info
 #' @export
-raw.find <- function(rawBase, recursive=TRUE) {
+raw.find <- function(rawBase, recursive=TRUE, quiet=FALSE) {
 
   # find files with specified extensions
   find_files_with_extensions <- function(pfad, extensions) {
@@ -39,21 +39,21 @@ raw.find <- function(rawBase, recursive=TRUE) {
   fList_ext = c()
 
   if(is.null(df_history)) {
-    cli_alert_warning("No history in rawBase object.")
+    if (!quiet) cli_alert_warning("No history in rawBase object.")
     return(fList)
   }
 
   for(i in 1:nrow(df_history)) {
     path = df_history$path[i]
-    cli_alert_info(paste("Searching path:",path))
+    if (!quiet) cli_alert_info(paste("Searching path:",path))
 
     projectName = df_history$project[i]
-    cli_alert_info(paste("Project:",projectName))
+    if (!quiet) cli_alert_info(paste("Project:",projectName))
 
     recursive = df_history$recursive[i]
 
     if (!dir.exists(path)) {
-      cli_alert_info(paste0("Path not found: <<",path,">>."))
+      if (!quiet) cli_alert_info(paste0("Path not found: <<",path,">>."))
       next
     }
 

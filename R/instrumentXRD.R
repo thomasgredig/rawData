@@ -1,7 +1,7 @@
 #' Load XRD instrument data
 #'
 #' @param rawBase rawBase object
-#' @returns data frame with XRD data for all XRD files in rawBase
+#' @returns  rawBase
 #'
 #' @importFrom rigakuXRD xrd.import
 #' @importFrom usethis use_data ui_silence
@@ -25,7 +25,7 @@ instrumentXRD <- function(rawBase) {
 
   # data frame with all files
   df <- as.data.frame(rawBase$dataRAW)
-  if(nrow(df)==0L) return(FALSE)
+  if(nrow(df)==0L) return(rawBase)
 
   # load all XRD data
   for(ID in df$ID) {
@@ -45,6 +45,6 @@ instrumentXRD <- function(rawBase) {
     use_data(dataXRD, overwrite=TRUE)
   )
 
-  invisible(TRUE)
+  rawBase
 }
 

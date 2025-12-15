@@ -88,5 +88,5 @@ instrumentAFM <- function(rawBase) {
     use_data(dataFilesAFM, overwrite=TRUE)
   )
 
-  invisible(TRUE)
+  rawBase
 }
