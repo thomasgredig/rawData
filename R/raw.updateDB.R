@@ -10,7 +10,7 @@ raw.updateDB <- function(rawBase, quiet=FALSE) {
   # check whether there is an SQL database already
   if (sql_database_exists(rawBase)) {
     if (!"afmHistory" %in% names(rawBase)) {
-      rawBase$afmHistory <- nanoAFMr::get
+      #rawBase$afmHistory <- nanoAFMr::get
     }
 
     # update to current version, if necessary
