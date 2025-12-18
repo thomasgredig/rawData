@@ -11,6 +11,7 @@
 #' @param recursive logical, recursive search in path
 #' @param instrument_list list, contains instruments to be added
 #' @param forceUpdateMissing if TRUE, all missing files are checked for folder update, useful for legacy RAWID files
+#' @param quiet suppresses messages
 #'
 #' @importFrom usethis ui_silence
 #'
@@ -21,7 +22,7 @@
 raw.update <- function(
     rawBase,
     path = NULL,
-    project = NULL,  # kept for API compatibility, though not used
+    project = NULL,
     sqlPath = NULL,
     recursive = TRUE,
     instrument_list = list(XRD = instrumentXRD, AFM = instrumentAFM),
@@ -42,7 +43,12 @@ raw.update <- function(
 
   # Update extensions --------------------------------------------------------
   if (length(extensions) > 0L) {
-    rawBase$extensions <- extensions
+    rawBase$extensions <- unique(c(rawBase$extensions,extensions))
+  }
+
+  # Update history with project ----------------------------------------------
+  if (!is.null(project)) {
+
   }
 
   # Add paths and files ------------------------------------------------------
@@ -59,11 +65,11 @@ raw.update <- function(
   if (forceUpdateMissing) { rawBase <- raw.updateMissingFilePaths(rawBase) }
 
   # Update SQL databse
-  rawBase = raw.updateDB(rawBase)
+  rawBase = raw.updateDB(rawBase, quiet=quiet)
 
   # Update instrument-specific data -----------------------------------------
   # will update instrument specific files
-  rawBase = raw.updateInstrument(rawBase)
+  rawBase = raw.updateInstrument(rawBase, quiet=quiet)
 
   # Persist updated object ---------------------------------------------------
   ui_silence(

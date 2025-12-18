@@ -11,7 +11,7 @@ test_that("import xrd data", {
                       sqlPaths=tmpDir,
                       recursive=FALSE,
                       instrument_list = instrument_list,
-                      verbose=FALSE)
+                      quiet=TRUE)
 
 
   dataRAW = as.data.frame(rawBase$dataRAW)

@@ -6,14 +6,16 @@
 #'
 #'
 #' @param rawBase object with information
+#' @param quiet suppresses messages
+#'
 #' @importFrom dplyr "%>%"
 #'
 #' @export
-raw.updateInstrument <- function(rawBase) {
+raw.updateInstrument <- function(rawBase, quiet=FALSE) {
   if (is.null(rawBase$instruments)) return(rawBase)
 
   for(func in names(rawBase$instruments)) {
-    cat("Calling",func,"instrument for update.\n")
+    if (!quiet) cat("Calling",func,"instrument for update.\n")
     rawBase$instruments[[func]](rawBase)
   }
 

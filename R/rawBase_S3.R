@@ -87,9 +87,9 @@ print.rawBase <- function(rawBase, ...) {
   cat("Project names ...:",unique(rawBase$import_history$project),"\n")
   cat("SQL paths .......:",paste(rawBase$sql_paths,collapse=" :: "),"\n")
   cat("SQL database ....:",dbName,"\n")
-  cat("Instruments .....:",paste(names(rawBase$instruments), collapse=","),"\n")
+  cat("Instruments .....:",paste(names(rawBase$instruments), collapse=", "),"\n")
   cat("RAW data files ..:",nrow(dataRAW)," (",length(which(rawBase$dataRAW$missing==TRUE)),"missing)\n")
-  cat("Extensions ......:",paste0(rawBase$extensions, collapse = ","),"\n")
+  cat("Extensions ......:",paste0(rawBase$extensions, collapse = ", "),"\n")
 
   if (file.exists(raw.getDatabase(rawBase))) {
     cli::cli_alert_success("Success finding SQL database.")

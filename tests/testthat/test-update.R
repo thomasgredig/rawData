@@ -4,7 +4,7 @@ test_that("check dataRAW update", {
   tmpDir = get_test_RAW_folder(10, projectName, recreate=TRUE)
 
   # check INITIALIZATION
-  rawBase <- raw.init(projectName, paths=tmpDir, sqlPaths=tmpDir, recursive=FALSE, verbose=FALSE, quiet=TRUE)
+  rawBase <- raw.init(projectName, paths=tmpDir, sqlPaths=tmpDir, recursive=FALSE, quiet=TRUE)
   dataRAW = as.data.frame(rawBase$dataRAW)
   expect_equal(dataRAW$ID, 7:16)
 
@@ -64,7 +64,7 @@ test_that("update DB", {
                       sqlPaths=tmpDir,
                       recursive=FALSE,
                       instrument_list = instrument_list,
-                      verbose=FALSE, quiet=TRUE)
+                      quiet=TRUE)
   expect_true(is.null(check_rawBase(rawBase)))
   expect_true(length(rawBase$sql_paths)>0L)
 
@@ -76,7 +76,7 @@ test_that("update DB", {
   file.remove(raw.getDatabase(rawBase))
 
   # update should re-create database
-  rawBase = raw.update(rawBase)
+  rawBase = raw.update(rawBase, quiet=TRUE)
   expect_true(file.exists(raw.getDatabase(rawBase)))
 
   # delete database

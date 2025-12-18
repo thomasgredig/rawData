@@ -19,6 +19,7 @@ raw.getMD5 <- function(filename, num=6) {
 }
 
 #' Returns the CRC for filename
+#' @param filename filename
 #' @export
 raw.getCRC <- function(filename) { .getCRC(filename) }
 

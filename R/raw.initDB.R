@@ -12,14 +12,14 @@
 #' needs to be recreated.
 #'
 #' @param rawBase object, use create_rawBase()
-#' @param verbose logical to display additional information
+#' @param quiet suppress messages
 #'
 #' @importFrom DBI dbConnect dbDisconnect
 #' @importFrom RSQLite SQLite
 #' @importFrom cli cli_inform
 #'
 #' @export
-raw.initDB <- function(rawBase, verbose=TRUE, quiet=FALSE) {
+raw.initDB <- function(rawBase, quiet=FALSE) {
   check_rawBase(rawBase) # make sure, it is a valid object
 
   if (sql_database_exists(rawBase)) {
@@ -31,7 +31,7 @@ raw.initDB <- function(rawBase, verbose=TRUE, quiet=FALSE) {
 
   dbName = get_newSQLname(rawBase)
 
-  if (verbose) cat("Creating new database:", dbName, "\n")
+  if (!quiet) cat("Creating new database:", dbName, "\n")
   if (file.exists(dbName)) {
     warning("Cannot create SQLite database, because it already exists.")
     return(rawBase)

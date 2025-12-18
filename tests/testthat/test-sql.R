@@ -5,8 +5,7 @@ test_that("SQL database location", {
   rawBase <- raw.init(projectName,
                       paths=tmpDir,
                       sqlPaths=tmpDir,
-                      recursive=FALSE,
-                      verbose=FALSE, quiet=TRUE)
+                      recursive=FALSE, quiet=TRUE)
   sqlfile = dir(tmpDir, pattern="lite$", full.names = TRUE)
   expect_true(file.exists(sqlfile))
 
@@ -23,7 +22,9 @@ test_that("SQL database location", {
     expect_equal(raw.getDatabase(rawBase), ""),
     regexp = ".*"
   )
-  rawBase <- raw.update(rawBase, sqlPath = file.path(dirname(sqlfile), newSQLdir))
+  rawBase <- raw.update(rawBase,
+                        sqlPath = file.path(dirname(sqlfile), newSQLdir),
+                        quiet=TRUE)
   # DB is found again
   expect_true(file.exists(raw.getDatabase(rawBase)))
 
@@ -39,8 +40,7 @@ test_that("update DB version", {
   rawBase <- raw.init(projectName,
                       paths=tmpDir,
                       sqlPaths=tmpDir,
-                      recursive=FALSE,
-                      verbose=FALSE, quiet=TRUE)
+                      recursive=FALSE,  quiet=TRUE)
   sqlfile = dir(tmpDir, pattern="lite$", full.names = TRUE)
   # change SQL to old version
   old_sqlfile = gsub("(.*)-\\d+\\.\\d+\\.\\d+\\.sqlite$","\\1-0.0.0.sqlite",sqlfile)
@@ -52,7 +52,7 @@ test_that("update DB version", {
                       paths=tmpDir,
                       sqlPaths=tmpDir,
                       recursive=FALSE,
-                      verbose=FALSE, quiet=TRUE)
+                      quiet=TRUE)
 
   expect_true(file.exists(sqlfile))
 

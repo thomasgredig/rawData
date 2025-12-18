@@ -17,7 +17,7 @@ raw.updateDB <- function(rawBase, quiet=FALSE) {
     update_databaseName(rawBase,quiet=quiet)
   } else {
     # if SQL DB is not found, then create it and populate it, if possible
-    raw.initDB(rawBase)
+    raw.initDB(rawBase, quiet=quiet)
   }
   # return updated rawBase
   rawBase

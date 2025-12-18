@@ -11,6 +11,7 @@
 #'
 #' @param rawBase list generated with raw.init()
 #' @param recursive logical, determines whether path is searched recursively.
+#' @param quiet suppress messages
 #'
 #' @returns vector with file list that includes paths
 #' @importFrom cli cli_alert_warning cli_alert_info
@@ -32,7 +33,7 @@ raw.find <- function(rawBase, recursive=TRUE, quiet=FALSE) {
         recursive = TRUE)
   }
 
-  if (!is(rawBase,"rawBase")) stop("rawBase object required.")
+  check_rawBase(rawBase)
 
   df_history = rawBase$import_history
   fList = c()
@@ -65,8 +66,8 @@ raw.find <- function(rawBase, recursive=TRUE, quiet=FALSE) {
                          recursive = recursive))
 
     # if there are any extensions, then add files with those extensions
-    if (length(rawBase$ext) >0 )
-      fList_ext = c(fList_ext, find_files_with_extensions(path, rawBase$ext) )
+    if (length(rawBase$extensions) >0 )
+      fList_ext = c(fList_ext, find_files_with_extensions(path, rawBase$extensions) )
   }
 
   c(fList, fList_ext)
