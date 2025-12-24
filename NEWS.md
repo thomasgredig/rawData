@@ -1,3 +1,7 @@
+# rawData 0.2.9
+
+* avoid overwriting instrument data (AFM)
+
 # rawData 0.2.8
 
 * Instruments return `rawBase`

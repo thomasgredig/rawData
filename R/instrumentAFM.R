@@ -5,6 +5,7 @@
 #'
 #' @importFrom usethis use_data ui_silence
 #' @importFrom nanoAFMr AFM.import AFM.partial AFMinfo AFMinfo.item
+#' @importFrom dplyr "%>%" distinct bind_rows
 #'
 #' @export
 instrumentAFM <- function(rawBase) {
@@ -83,7 +84,14 @@ instrumentAFM <- function(rawBase) {
   }
 
   # save data to file
-  dataFilesAFM = result
+  data_filename = file.path("data", "dataFilesAFM.rda")
+  if (file.exists(data_filename)) {
+    former <- load(data_filename)
+    dataFilesAFM <- bind_rows(former, result) %>%
+      distinct(ID, .keep_all = TRUE, .fromLast = TRUE)
+  } else {
+    dataFilesAFM = result
+  }
   ui_silence(
     use_data(dataFilesAFM, overwrite=TRUE)
   )

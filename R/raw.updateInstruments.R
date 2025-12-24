@@ -8,7 +8,6 @@
 #' @param rawBase object with information
 #' @param quiet suppresses messages
 #'
-#' @importFrom dplyr "%>%"
 #'
 #' @export
 raw.updateInstrument <- function(rawBase, quiet=FALSE) {
