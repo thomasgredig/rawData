@@ -9,7 +9,7 @@
 #'
 #' @export
 instrumentAFM <- function(rawBase) {
-  # which files are recognized as XRD files
+  # which files are recognized as AFM files
   .isafm <- function(filename) {
     grepl('\\.tiff$', filename) | grepl('\\.nid$', filename) |
       grepl('\\.ibw$', filename) | grepl('\\.\\d{3}$', filename)
@@ -33,8 +33,9 @@ instrumentAFM <- function(rawBase) {
     if (ID %in% old_IDs) next
     filename = raw.getFilename(rawBase, ID)
     # cat("Loading: ", filename, "...\n")
-    if (!file.exists(filename)) next
     if (!.isafm(filename)) next
+    if (!file.exists(filename)) next
+
 
     df <- AFM.import(filename)
     if (is.null(df)) next

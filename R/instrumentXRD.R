@@ -14,6 +14,10 @@ instrumentXRD <- function(rawBase) {
   }
   check_rawBase(rawBase)
 
+  data_filename = file.path("data", "dataXRD.rda")
+  if (file.exists(data_filename)) {
+    load(data_filename)
+  }
   # import previous datasets
   if(exists("dataXRD")) {
     r = dataXRD
@@ -25,14 +29,17 @@ instrumentXRD <- function(rawBase) {
 
   # data frame with all files
   df <- as.data.frame(rawBase$dataRAW)
-  if(nrow(df)==0L) return(rawBase)
+  if(nrow(df)==0L) {
+    warning("rawBase has not files.")
+    return(rawBase)
+  }
 
   # load all XRD data
   for(ID in df$ID) {
     if (ID %in% old_IDs) next
     filename = raw.getFilename(rawBase, ID)
-    if (!file.exists(filename)) next
     if (!.isxrd(filename)) next
+    if (!file.exists(filename)) next
 
     d = xrd.import(filename)
     d$ID = ID
