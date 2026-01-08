@@ -81,7 +81,7 @@ create_rawBase <- function(projectName,
 print.rawBase <- function(rawBase, ...) {
   dbName = .getDatabaseName(rawBase)
   dataRAW = as.data.frame(rawBase$dataRAW)
-  cat("Project .........:",rawBase$project_name,"\n")
+  cat("Project .........:",paste(rawBase$project_name,collapse=" :: "),"\n")
   cat("Package .........:",rawBase$package_name,"\n")
   cat("RAW paths .......:",paste(rawBase$raw_paths,collapse=" :: "),"\n")
   cat("Project names ...:",unique(rawBase$import_history$project),"\n")

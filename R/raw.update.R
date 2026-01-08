@@ -48,12 +48,13 @@ raw.update <- function(
 
   # Update history with project ----------------------------------------------
   if (!is.null(project)) {
-
+    rawBase$project_name <- unique(c(rawBase$project_name, project))
   }
 
   # Add paths and files ------------------------------------------------------
-  rawBase <- raw.addPath(
+  rawBase <- raw.addPath(  # this will add new projects / paths to search
     rawBase,
+    project  = project,
     path     = path,
     sqlPath  = sqlPath,
     recursive = recursive

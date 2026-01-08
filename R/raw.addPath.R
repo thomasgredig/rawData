@@ -3,11 +3,11 @@
 #' @returns rawBase object
 #'
 #' @export
-raw.addPath <- function(rawBase, path, sqlPath, recursive = TRUE) {
+raw.addPath <- function(rawBase, project, path, sqlPath, recursive = TRUE) {
   if(!is.null(path)) rawBase$raw_paths = c(rawBase$raw_paths, path)
   rawBase$import_history = update_rawBaseHistory(rawBase$import_history,
                                                  "add",
-                                                 rawBase$project,
+                                                 project,
                                                  path,
                                                  recursive)
   # update SQL paths

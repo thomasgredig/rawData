@@ -1,3 +1,7 @@
+# rawData 0.2.10
+
+* if AFM data is already available, then do not search again, same for XRD
+
 # rawData 0.2.9
 
 * avoid overwriting instrument data (AFM)

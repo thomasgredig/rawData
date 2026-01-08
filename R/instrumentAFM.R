@@ -18,17 +18,21 @@ instrumentAFM <- function(rawBase) {
   # data frame with all files
   df <- as.data.frame(rawBase$dataRAW)
 
+  data_filename = file.path("data", "dataFilesAFM.rda")
+  if (file.exists(data_filename)) {
+    load(data_filename)
+  }
+
   # import previous datasets
   if(exists("dataFilesAFM")) {
-    r = dataFilesAFM
+    result = dataFilesAFM
     old_IDs = unique(r$ID)
   } else {
-    r = data.frame()
+    result = data.frame()
     old_IDs = c()
   }
 
   # load all AFM  data
-  result = data.frame()
   for(ID in df$ID) {
     if (ID %in% old_IDs) next
     filename = raw.getFilename(rawBase, ID)
@@ -85,14 +89,12 @@ instrumentAFM <- function(rawBase) {
   }
 
   # save data to file
-  data_filename = file.path("data", "dataFilesAFM.rda")
-  if (file.exists(data_filename)) {
-    former <- load(data_filename)
-    dataFilesAFM <- bind_rows(former, result) %>%
-      distinct(ID, .keep_all = TRUE, .fromLast = TRUE)
-  } else {
-    dataFilesAFM = result
-  }
+  dataFilesAFM = result
+  # if (file.exists(data_filename)) {
+  #   load(data_filename)
+  #   dataFilesAFM <- bind_rows(dataFilesAFM, result) %>%
+  #     distinct(ID, .keep_all = TRUE, .fromLast = TRUE)
+  # }
   ui_silence(
     use_data(dataFilesAFM, overwrite=TRUE)
   )
