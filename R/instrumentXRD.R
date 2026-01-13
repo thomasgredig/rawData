@@ -3,7 +3,7 @@
 #' @param rawBase rawBase object
 #' @returns  rawBase
 #'
-#' @importFrom rigakuXRD xrd.import
+#' @importFrom rigakuXRD xrd_import
 #' @importFrom usethis use_data ui_silence
 #'
 #' @export
@@ -41,7 +41,7 @@ instrumentXRD <- function(rawBase) {
     if (!.isxrd(filename)) next
     if (!file.exists(filename)) next
 
-    d = xrd.import(filename)
+    d = xrd_import(filename)
     d$ID = ID
     r = rbind(r,d)
   }

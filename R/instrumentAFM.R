@@ -6,6 +6,7 @@
 #' @importFrom usethis use_data ui_silence
 #' @importFrom nanoAFMr AFM.import AFM.partial AFMinfo AFMinfo.item
 #' @importFrom dplyr "%>%" distinct bind_rows
+#' @importFrom cli cli_inform
 #'
 #' @export
 instrumentAFM <- function(rawBase) {
@@ -27,6 +28,7 @@ instrumentAFM <- function(rawBase) {
   if(exists("dataFilesAFM")) {
     result = dataFilesAFM
     old_IDs = unique(r$ID)
+    cli_inform(paste0("dataFilesAFM found: ",length(old_IDs)," IDs."))
   } else {
     result = data.frame()
     old_IDs = c()

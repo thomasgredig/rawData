@@ -1,6 +1,7 @@
 # rawData 0.2.10
 
 * if AFM data is already available, then do not search again, same for XRD
+* update to `xrd_import` new version of rigakuXRD package
 
 # rawData 0.2.9
 
