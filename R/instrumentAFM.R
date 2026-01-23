@@ -27,7 +27,7 @@ instrumentAFM <- function(rawBase) {
   # import previous datasets
   if(exists("dataFilesAFM")) {
     result = dataFilesAFM
-    old_IDs = unique(r$ID)
+    old_IDs = unique(result$ID)
     cli_inform(paste0("dataFilesAFM found: ",length(old_IDs)," IDs."))
   } else {
     result = data.frame()

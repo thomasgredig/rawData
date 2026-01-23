@@ -1,3 +1,5 @@
+# rawData 0.2.11
+
 # rawData 0.2.10
 
 * if AFM data is already available, then do not search again, same for XRD
