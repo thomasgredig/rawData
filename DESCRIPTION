@@ -1,7 +1,7 @@
 Package: rawData
 Type: Package
 Title: RAW data manager
-Version: 0.2.11
+Version: 0.2.12
 Authors@R: 
     person("Thomas", "Gredig", , "thomas.gredig@csulb.edu", 
           role = c("aut", "cre", "cph"),

@@ -16,7 +16,7 @@
 #' @returns vector with file list that includes paths
 #' @importFrom cli cli_alert_warning cli_alert_info
 #' @export
-raw.find <- function(rawBase, recursive=TRUE, quiet=FALSE) {
+raw.find <- function(rawBase,   recursive=TRUE, quiet=FALSE) {
 
   # find files with specified extensions
   find_files_with_extensions <- function(pfad, extensions) {
@@ -45,29 +45,42 @@ raw.find <- function(rawBase, recursive=TRUE, quiet=FALSE) {
   }
 
   for(i in 1:nrow(df_history)) {
-    path = df_history$path[i]
-    if (!quiet) cli_alert_info(paste("Searching path:",path))
-
-    projectName = df_history$project[i]
-    if (!quiet) cli_alert_info(paste("Project:",projectName))
-
     recursive = df_history$recursive[i]
+    if (df_history$action[i] == "add") { # add path with projects
+      path = df_history$path[i]
+      if (!quiet) cli_alert_info(paste("Searching path:",path))
 
-    if (!dir.exists(path)) {
-      if (!quiet) cli_alert_info(paste0("Path not found: <<",path,">>."))
-      next
+      projectName = df_history$project[i]
+      if (!quiet) cli_alert_info(paste("Project:",projectName))
+
+      if (!dir.exists(path)) {
+        if (!quiet) cli_alert_info(paste0("Path not found: <<",path,">>."))
+        next
+      }
+
+      fList = c(fList, dir(path,
+                           pattern = paste0(".*20\\d{6}[_-]",projectName,"[_-].*"),
+                           ignore.case = TRUE,
+                           include.dirs = TRUE,
+                           full.names = TRUE,
+                           recursive = recursive))
+
+      # if there are any extensions, then add files with those extensions
+      if (length(rawBase$extensions) >0 )
+        fList_ext = c(fList_ext, find_files_with_extensions(path, rawBase$extensions) )
+    } else { # add files with pattern
+      file_pattern = df_history$path[i]
+      for (pfad in rawBase$raw_paths) {
+        cat("\nSearching:",pfad,"\n")
+        fList = c(fList, dir(pfad,
+                             pattern = file_pattern,
+                             ignore.case = TRUE,
+                             include.dirs = TRUE,
+                             full.names = TRUE,
+                             recursive = recursive))
+      }
+
     }
-
-    fList = c(fList, dir(path,
-                         pattern = paste0(".*20\\d{6}[_-]",projectName,"[_-].*"),
-                         ignore.case = TRUE,
-                         include.dirs = TRUE,
-                         full.names = TRUE,
-                         recursive = recursive))
-
-    # if there are any extensions, then add files with those extensions
-    if (length(rawBase$extensions) >0 )
-      fList_ext = c(fList_ext, find_files_with_extensions(path, rawBase$extensions) )
   }
 
   c(fList, fList_ext)

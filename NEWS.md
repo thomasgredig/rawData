@@ -1,4 +1,7 @@
-# rawData 0.2.11
+# rawData 0.2.12
+
+* add `file_pattern` argument to `raw.update` to include special files not included in project
+* more testing for loading AFM images
 
 # rawData 0.2.10
 

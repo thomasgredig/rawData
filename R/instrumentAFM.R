@@ -24,6 +24,7 @@ instrumentAFM <- function(rawBase) {
     load(data_filename)
   }
 
+
   # import previous datasets
   if(exists("dataFilesAFM")) {
     result = dataFilesAFM
@@ -34,6 +35,7 @@ instrumentAFM <- function(rawBase) {
     old_IDs = c()
   }
 
+
   # load all AFM  data
   for(ID in df$ID) {
     if (ID %in% old_IDs) next
@@ -41,7 +43,6 @@ instrumentAFM <- function(rawBase) {
     # cat("Loading: ", filename, "...\n")
     if (!.isafm(filename)) next
     if (!file.exists(filename)) next
-
 
     df <- AFM.import(filename)
     if (is.null(df)) next

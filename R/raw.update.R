@@ -7,6 +7,7 @@
 #' @param rawBase object with information about file locations
 #' @param path path with updated information about files.
 #' @param project any new project to be added to be searched
+#' @param file_pattern pattern to search for additional files to be included
 #' @param sqlPath any SQL path to be added
 #' @param recursive logical, recursive search in path
 #' @param instrument_list list, contains instruments to be added
@@ -23,6 +24,7 @@ raw.update <- function(
     rawBase,
     path = NULL,
     project = NULL,
+    file_pattern = NULL,
     sqlPath = NULL,
     recursive = TRUE,
     instrument_list = list(XRD = instrumentXRD, AFM = instrumentAFM),
@@ -46,12 +48,13 @@ raw.update <- function(
     rawBase$extensions <- unique(c(rawBase$extensions,extensions))
   }
 
-  # Update history with project ----------------------------------------------
+  # Update projects ----------------------------------------------
   if (!is.null(project)) {
     rawBase$project_name <- unique(c(rawBase$project_name, project))
   }
 
   # Add paths and files ------------------------------------------------------
+  # Updates History ----------------------------------------------------------
   rawBase <- raw.addPath(  # this will add new projects / paths to search
     rawBase,
     project  = project,
@@ -59,8 +62,15 @@ raw.update <- function(
     sqlPath  = sqlPath,
     recursive = recursive
   )
+  if (!is.null(file_pattern)) {
+    rawBase$import_history = update_rawBaseHistory(rawBase$import_history,
+                                                   "files",
+                                                   "",
+                                                   file_pattern,
+                                                   recursive)
+  }
 
-  rawBase <- raw.addFiles(rawBase)
+  rawBase <- raw.addFiles(rawBase, file_pattern)
 
   # check whether the reference folder has changed and then update missing files
   if (forceUpdateMissing) { rawBase <- raw.updateMissingFilePaths(rawBase) }
@@ -91,6 +101,7 @@ raw.update <- function(
 #' it will be updated, but not added; the ID remains the same.
 #'
 #' @param rawBase see raw.init() to create this
+
 #' @param verbose logical to output more information
 #'
 #' @importFrom cli cli_alert_warning
