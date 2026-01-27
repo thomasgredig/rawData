@@ -12,11 +12,13 @@
 #' @export
 raw.updateInstrument <- function(rawBase, quiet=FALSE) {
   if (is.null(rawBase$instruments)) return(rawBase)
+  rawBase <- instrumentXRD(rawBase)
+  rawBase <- instrumentAFM(rawBase)
 
-  for(func in names(rawBase$instruments)) {
-    if (!quiet) cat("Calling",func,"instrument for update.\n")
-    rawBase$instruments[[func]](rawBase)
-  }
+  # for(func in names(rawBase$instruments)) {
+  #   if (!quiet) cat("Calling",func,"instrument for update.\n")
+  #   rawBase$instruments[[func]](rawBase)
+  # }
 
   # returns updated rawBase
   rawBase

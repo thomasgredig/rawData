@@ -20,10 +20,10 @@ instrumentXRD <- function(rawBase) {
   }
   # import previous datasets
   if(exists("dataXRD")) {
-    r = dataXRD
-    old_IDs = unique(r$ID)
+    r_xrd = dataXRD
+    old_IDs = unique(r_xrd$ID)
   } else {
-    r = data.frame()
+    r_xrd = data.frame()
     old_IDs = c()
   }
 
@@ -43,10 +43,10 @@ instrumentXRD <- function(rawBase) {
 
     d = xrd_import(filename)
     d$ID = ID
-    r = rbind(r,d)
+    r_xrd = rbind(r_xrd,d)
   }
 
-  dataXRD = r
+  dataXRD = r_xrd
 
   ui_silence(
     use_data(dataXRD, overwrite=TRUE)
