@@ -58,7 +58,7 @@ instrumentAFM <- function(rawBase) {
     res.px = as.numeric(gsub('(\\d+).*','\\1',summary(df)$resolution))
     size.nm = as.numeric(gsub('(\\d+).*','\\1',summary(df)$size))
 
-    r = cbind(
+    r_afm = cbind(
       ID = ID,
       sample = "",
       filename = basename(filename),
@@ -74,21 +74,21 @@ instrumentAFM <- function(rawBase) {
       res.px = res.px[1],
       size.nm = size.nm[1]
     )
-    r$channel = paste(summary(df)$channel, collapse=",")
-    r$z.min = paste(summary(df)$z.min, collapse=",")
-    r$z.max = paste(summary(df)$z.max, collapse=",")
-    r$z.units = paste(summary(df)$z.units, collapse=",")
-    r$imgNo = 0
-    r$direction = ""
-    r$history <- NULL
+    r_afm$channel = paste(summary(df)$channel, collapse=",")
+    r_afm$z.min = paste(summary(df)$z.min, collapse=",")
+    r_afm$z.max = paste(summary(df)$z.max, collapse=",")
+    r_afm$z.units = paste(summary(df)$z.units, collapse=",")
+    r_afm$imgNo = 0
+    r_afm$direction = ""
+    r_afm$history <- NULL
     # Number of the image for the run
-    r$imgNo = as.numeric(gsub('.*(\\d{3})\\.?.*','\\1',filename))
+    r_afm$imgNo = as.numeric(gsub('.*(\\d{3})\\.?.*','\\1',filename))
     # Scanning Direction of AFM run
-    r$direction = 0
-    r$direction[which(grepl('Forward',  filename)==TRUE)] = 1
-    r$direction[which(grepl('Backward',  filename)==TRUE)] = -1
+    r_afm$direction = 0
+    r_afm$direction[which(grepl('Forward',  filename)==TRUE)] = 1
+    r_afm$direction[which(grepl('Backward',  filename)==TRUE)] = -1
 
-    result = rbind(result, r)
+    result = rbind(result, r_afm)
   }
 
   # save data to file
