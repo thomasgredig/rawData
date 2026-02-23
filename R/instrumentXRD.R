@@ -4,6 +4,7 @@
 #' @returns  rawBase
 #'
 #' @importFrom rigakuXRD xrd_import
+#' @importFrom dplyr bind_rows
 #' @importFrom usethis use_data ui_silence
 #'
 #' @export
@@ -43,7 +44,8 @@ instrumentXRD <- function(rawBase) {
 
     d = xrd_import(filename)
     d$ID = ID
-    r_xrd = rbind(r_xrd,d)
+
+    r_xrd <- bind_rows(r_xrd, d)
   }
 
   dataXRD = r_xrd

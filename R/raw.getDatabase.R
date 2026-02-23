@@ -21,7 +21,7 @@
 #'
 #' @importFrom utils packageVersion
 #'
-#' @return SQL database filename and path
+#' @return SQL database filename and path or NULL or empty string if not found
 #'
 #' @export
 raw.getDatabase <- function(rawBase, verbose = FALSE) {
