@@ -88,7 +88,8 @@ instrumentAFM <- function(rawBase) {
     r_afm$direction[which(grepl('Forward',  filename)==TRUE)] = 1
     r_afm$direction[which(grepl('Backward',  filename)==TRUE)] = -1
 
-    result = rbind(result, r_afm)
+    # result = rbind(result, r_afm)
+    result = dplyr::bind_rows(result, r_afm)
   }
 
   # save data to file

@@ -1,3 +1,7 @@
+# rawData 0.2.13
+
+* use `bind_rows` instead of `rbind` in AFM
+
 # rawData 0.2.12
 
 * add `file_pattern` argument to `raw.update` to include special files not included in project
