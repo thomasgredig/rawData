@@ -127,6 +127,7 @@ rbind.dataRAW <- function(d1, d2) {
   if (nrow(df2)==0) return(d1)
   df1 = as.data.frame(d1)
   if (nrow(df1)==0) return(d2)
+  df1 <- .consolidate_duplicated_IDs(df1)
 
   # df1 should not have any duplicates(!)
   if(length(which(duplicated(df1$crc)))>0L) warning("dataRAW frame 1 should not have duplicates.")
@@ -164,6 +165,44 @@ rbind.dataRAW <- function(d1, d2) {
   # Convert dataframe to dataRAW
   class(df3) <- "dataRAW"
   df3
+}
+
+.consolidate_duplicated_IDs <- function(df1) {
+  # Find rows sharing the same ID
+  split_rows <- split(seq_len(nrow(df1)), df1$ID)
+
+  keep_idx <- unlist(lapply(split_rows, function(idx) {
+    # Only one row for this ID -> keep it
+    if (length(idx) == 1) {
+      return(idx)
+    }
+
+    sub <- df1[idx, , drop = FALSE]
+
+    # Require duplicated IDs to refer to the same filename
+    if (length(unique(sub$filename)) != 1) {
+      stop(
+        sprintf(
+          "ID %s appears multiple times with different filenames: %s",
+          unique(sub$ID),
+          paste(unique(sub$filename), collapse = ", ")
+        )
+      )
+    }
+
+    # Prefer an altered == TRUE row if present
+    altered_idx <- idx[which(sub$altered %in% TRUE)]
+
+    if (length(altered_idx) >= 1) {
+      return(altered_idx[1])
+    }
+
+    # Otherwise keep the first one
+    idx[1]
+  }))
+
+  # Return rows in original order
+  df1[sort(keep_idx), , drop = FALSE]
 }
 
 #' Print method for the dataRAW class
