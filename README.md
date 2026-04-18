@@ -77,3 +77,6 @@ rawBase <- raw.update(rawBase, sqlPath = "/newPath/")
 Run `covr::report()` to create a coverage report: **62.82%**
 
 Run `pkgdown::build_site()` to create the documentation.
+
+Use `devtools::build_manual(path=".")` to build the manual
+

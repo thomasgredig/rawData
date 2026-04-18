@@ -1,3 +1,7 @@
+# rawData 0.2.14
+
+* add `raw.addSQLpath` to quickly add a SQL path without having to check all files
+
 # rawData 0.2.13
 
 * use `bind_rows` instead of `rbind` in AFM

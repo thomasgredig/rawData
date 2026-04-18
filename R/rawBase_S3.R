@@ -95,6 +95,7 @@ print.rawBase <- function(rawBase, ...) {
     cli::cli_alert_success("Success finding SQL database.")
   } else {
     cli::cli_alert_danger("Failed finding SQL database.")
+    cli::cli_alert_info("Use raw.addSQLpath(rawBase, p) to add local path p for DB")
   }
 }
 
