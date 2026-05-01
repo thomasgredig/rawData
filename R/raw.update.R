@@ -70,7 +70,7 @@ raw.update <- function(
                                                    recursive)
   }
 
-  rawBase <- raw.addFiles(rawBase, file_pattern)
+  rawBase <- raw.addFiles(rawBase, file_pattern, verbose=!quiet)
 
   # check whether the reference folder has changed and then update missing files
   if (forceUpdateMissing) { rawBase <- raw.updateMissingFilePaths(rawBase) }
@@ -109,14 +109,14 @@ raw.update <- function(
 #' @returns rawBase object
 #'
 #' @export
-raw.addFiles <- function(rawBase, verbose=FALSE) {
+raw.addFiles <- function(rawBase, file_pattern, verbose=FALSE) {
   check_rawBase(rawBase)
 
   # before adding new files, check which files are accessible
   rawBase <- raw.checkMissing(rawBase)
 
   # find files that could potentially be added to dataRAW
-  fList = raw.find(rawBase, quiet=TRUE)
+  fList = raw.find(rawBase, file_pattern, quiet=TRUE)
 
   # Quit if no files are found.
   if (length(fList)==0) {
@@ -129,17 +129,10 @@ raw.addFiles <- function(rawBase, verbose=FALSE) {
   startID = 7
   new_dataRAW = create_dataRAW(startID, rawBase$raw_paths, fList)
 
-  if (is.null(rawBase$dataRAW)) {
+  if (is.null(rawBase$dataRAW) |  (length(rawBase$dataRAW)==0)) {
     rawBase$dataRAW = new_dataRAW
   } else {
-    dataRAW = rawBase$dataRAW
-    if (is(dataRAW,"data.frame")) {
-      rawBase$dataRAW = new_dataRAW
-    } else {
-      if(!is(dataRAW, "dataRAW")) stop("Expecting dataRAW object.")
-      rawBase$dataRAW = rbind(dataRAW, new_dataRAW)
-    }
-
+    rawBase$dataRAW = rbind.dataRAW(rawBase$dataRAW, new_dataRAW)
   }
 
   rawBase
@@ -233,3 +226,4 @@ check_rawBase <-function(rawBase) {
   }
   TRUE
 }
+

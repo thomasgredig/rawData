@@ -1,3 +1,8 @@
+# rawData 0.2.15
+
+* add `file_pattern`, but not fully implemented
+* small fixes to rbind
+
 # rawData 0.2.14
 
 * add `raw.addSQLpath` to quickly add a SQL path without having to check all files

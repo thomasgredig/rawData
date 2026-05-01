@@ -14,11 +14,11 @@ test_that("AFM testing", {
                       recursive=FALSE,
                       instrument_list = instrument_list,
                       quiet=TRUE)
-  afm_sample_file = nanoAFMr::AFM.getSampleImages()[6]
   dataRAW = as.data.frame(rawBase$dataRAW)
   expect_equal(length(dataRAW$ID), no_files)
 
   # add AFM file
+  afm_sample_file = nanoAFMr::AFM.getSampleImages()[6]
   file.copy(from=afm_sample_file, to=file.path(tmpDir,basename(afm_sample_file)))
   rawBase <- raw.update(rawBase, project="afmnew")
   # check that item is added to history

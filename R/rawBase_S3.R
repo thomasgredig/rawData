@@ -118,7 +118,7 @@ update_rawBaseHistory <- function(rh,action,project,path,recursive) {
   if(is.null(path)) { path= rh$path[nrow(rh)] } # inherit previous
   rh_new = create_rawBaseHistory(action,project,path,recursive)
   if(similar_rawBaseHistory(rh, rh_new)) return(rh)
-  rbind(rh, rh_new)
+  dplyr::bind_rows(rh, rh_new)
 }
 
 # checks whether rh_new is already similar to rh_vec somewhere

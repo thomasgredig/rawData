@@ -116,6 +116,7 @@ as.data.frame.dataRAW <- function(d,...) {
 #' @param d1 first dataRAW object
 #' @param d2 second dataRAW object to be appended
 #' @importFrom methods is
+#' @importFrom dplyr bind_rows
 #' @export
 rbind.dataRAW <- function(d1, d2) {
   # both objects should be dataRAW
@@ -137,7 +138,7 @@ rbind.dataRAW <- function(d1, d2) {
   df2$ID = 1:nrow(df2) + next_ID
 
   # find duplicates
-  df3 = rbind(df1,df2)
+  df3 = dplyr::bind_rows(df1,df2)
   m <- which(duplicated(df3$crc)==TRUE)
 
   c_del = c()

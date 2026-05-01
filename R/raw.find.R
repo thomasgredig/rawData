@@ -16,7 +16,7 @@
 #' @returns vector with file list that includes paths
 #' @importFrom cli cli_alert_warning cli_alert_info
 #' @export
-raw.find <- function(rawBase,   recursive=TRUE, quiet=FALSE) {
+raw.find <- function(rawBase,  file_pattern, recursive=TRUE, quiet=FALSE) {
 
   # find files with specified extensions
   find_files_with_extensions <- function(pfad, extensions) {
