@@ -28,7 +28,7 @@ raw.init <- function(projectName,
                      paths = NULL,
                      sqlPaths = NULL,
                      recursive=TRUE,
-                     instrument_list = list(XRD = instrumentXRD, AFM = instrumentAFM),
+                     instrument_list = list(XRD = instrumentXRD, AFM = instrumentAFM, instrumentATE),
                      legacyRAWIDfile="",
                      extensions = c(),
                      ...) {

@@ -27,7 +27,7 @@ test_that("check dataRAW update", {
   expect_true(file.remove(file_delete))
   file_delete = dir(tmpDir, pattern=projectName, full.names=TRUE)[3]
   expect_true(file.remove(file_delete))
-  rawBase <- raw.update(rawBase, path=tmpDir)
+  rawBase <- raw.update(rawBase, path=tmpDir) # <<-----
   dataRAW = as.data.frame(rawBase$dataRAW)
   expect_equal(dataRAW$ID, prevIDs)
   expect_equal(length(which(dataRAW$missing==TRUE)),2)

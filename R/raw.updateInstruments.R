@@ -12,8 +12,13 @@
 #' @export
 raw.updateInstrument <- function(rawBase, quiet=FALSE) {
   if (is.null(rawBase$instruments)) return(rawBase)
-  rawBase <- instrumentXRD(rawBase)
-  rawBase <- instrumentAFM(rawBase)
+
+  # run each instrument
+  lapply(rawBase$instruments, function(f) f(rawBase))
+
+  # rawBase <- instrumentXRD(rawBase)
+  # rawBase <- instrumentAFM(rawBase)
+  # rawBase <- instrumentATE(rawBase)
 
   # for(func in names(rawBase$instruments)) {
   #   if (!quiet) cat("Calling",func,"instrument for update.\n")

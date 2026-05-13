@@ -9,3 +9,4 @@ _*.R
 data/func.rda
 *.rda
 .DS_Store
+.positai

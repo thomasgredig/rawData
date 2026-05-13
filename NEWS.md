@@ -1,3 +1,7 @@
+# rawData 0.2.16
+
+* support deposition data from `instrumentATE`
+
 # rawData 0.2.15
 
 * add `file_pattern`, but not fully implemented

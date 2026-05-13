@@ -27,7 +27,7 @@ raw.update <- function(
     file_pattern = NULL,
     sqlPath = NULL,
     recursive = TRUE,
-    instrument_list = list(XRD = instrumentXRD, AFM = instrumentAFM),
+    instrument_list = list(XRD = instrumentXRD, AFM = instrumentAFM, ATE = instrumentATE),
     extensions = character(),
     forceUpdateMissing = FALSE,
     quiet=FALSE
