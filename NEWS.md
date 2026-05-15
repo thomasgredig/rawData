@@ -1,5 +1,6 @@
 # rawData 0.2.16
 
+* add `raw.xrdInfo()` to read RASX files
 * add `raw.findID()` to get ID from string
 * support deposition data from `instrumentATE`
 

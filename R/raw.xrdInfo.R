@@ -14,7 +14,7 @@
 #' @return A `data.frame` containing the extracted XRD header/measurement
 #'   information for all available `.rasx` files. If no matching files are found,
 #'   or no matching files exist on disk, an empty `data.frame` is returned.
-#'
+#' @importFrom rigakuXRD xrd_read_RASX_header
 #' @export
 raw.xrdInfo <- function(rawBase) {
   df <- as.data.frame(rawBase$dataRAW)
