@@ -47,13 +47,13 @@ instrumentATE <- function(rawBase) {
 
     r_ate = data.frame(
       ID = ID,
-      sample = df$sample[df$ID==ID],
+      # sample = df$sample[df$ID==ID],
       filename = basename(filename),
       base_pressure = min(d_ate$pre_vacuum_pressure),
       source = paste(d_ate$source_name, collapse=";"),
       dep_time = paste(d_ate$deposition_time, collapse = ";")
     )
-    print(r_ate)
+
 
     result = dplyr::bind_rows(result, r_ate)
   }

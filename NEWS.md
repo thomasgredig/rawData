@@ -1,5 +1,6 @@
 # rawData 0.2.16
 
+* add `raw.findID()` to get ID from string
 * support deposition data from `instrumentATE`
 
 # rawData 0.2.15
