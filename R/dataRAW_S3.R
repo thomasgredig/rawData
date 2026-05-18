@@ -94,31 +94,48 @@ create_dataRAW <- function(ID,
 }
 
 #' @export
-as.data.frame.dataRAW <- function(d,...) {
+as.data.frame.dataRAW <- function(x, row.names = NULL, optional = FALSE, ...) {
   data.frame(
-    ID = d$ID,
-    path = d$path,
-    filename = d$filename,
-    crc = d$crc,
-    size = d$size,
-    type = d$type,
-    missing = d$missing,
-    altered = d$altered,
-    sample = d$sample,
-    date = d$date,
-    meta = d$meta
+    ID = x$ID,
+    path = x$path,
+    filename = x$filename,
+    crc = x$crc,
+    size = x$size,
+    type = x$type,
+    missing = x$missing,
+    altered = x$altered,
+    sample = x$sample,
+    date = x$date,
+    meta = x$meta,
+    row.names = row.names,
+    check.names = !optional,
+    ...
   )
 }
 
-
-
-#' row bind two dataRAW sets
-#' @param d1 first dataRAW object
-#' @param d2 second dataRAW object to be appended
+#' Row-bind two dataRAW objects
+#'
+#' Combines two `dataRAW` objects or data frames by row.
+#'
+#' @param ... Two `dataRAW` objects or data frames to merge. At most two inputs
+#'   are supported.
+#' @param deparse.level Integer. Included for compatibility with the base
+#'   [rbind()] generic. This argument is currently ignored.
+#'
+#' @return A row-bound `dataRAW` object or data frame.
+#'
 #' @importFrom methods is
 #' @importFrom dplyr bind_rows
 #' @export
-rbind.dataRAW <- function(d1, d2) {
+rbind.dataRAW <- function(..., deparse.level = 1) {
+  dots <- list(...)
+
+  if (length(dots) != 2) {
+    stop("rbind.dataRAW currently supports exactly two objects", call. = FALSE)
+  }
+
+  d1 <- dots[[1]]
+  d2 <- dots[[2]]
   # both objects should be dataRAW
   # if (!is(d1,"dataRAW")) stop("dataRAW 1 object required.")
   # if (!is(d2,"dataRAW")) stop("dataRAW 2 object required.")
@@ -206,14 +223,3 @@ rbind.dataRAW <- function(d1, d2) {
   df1[sort(keep_idx), , drop = FALSE]
 }
 
-#' Print method for the dataRAW class
-#' @param RAW created with create_dataRAW() function
-#' @param row.names logical to output additional row names
-#' @param ... additional params
-#' @importFrom utils head tail
-#' @export
-print.dataRAW <- function(d, row.names = FALSE, ...) {
-  print(paste("dataRAW info on",length(d$ID),"files:"))
-  df = data.frame(d$ID, d$filename, d$size, d$type, d$sample)
-  print(df, row.names = row.names, ...)
-}

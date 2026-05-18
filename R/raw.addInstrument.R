@@ -1,7 +1,7 @@
 #' Add Instruments
 #'
 #' @param rawBase rawBase object
-#' @param intrument_list list with instrument name (XRD, AFM) and function to call
+#' @param instrument_list list with instrument name (XRD, AFM) and function to call
 #'
 #' @seealso [raw.init()]
 #'

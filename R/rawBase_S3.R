@@ -7,7 +7,7 @@
 #' @param sqlPaths paths for location of SQL database
 #' @param instrument_list vector with instruments to be updated
 #' @param legacyRAWIDfile full path and file name of RAW-ID.csv file
-#' @param ext any extensions as a list
+#' @param extensions any extensions as a list
 #'
 #' @importFrom here here
 #'
@@ -75,27 +75,38 @@ create_rawBase <- function(projectName,
   rawBase
 }
 
-#' print rawData base object
+#' Print a rawBase object
+#'
+#' Prints a summary of a `rawBase` object.
+#'
+#' @param x A `rawBase` object.
+#' @param ... Additional arguments passed to or from other methods. Currently
+#'   ignored.
+#'
+#' @return Invisibly returns `x`.
+#'
 #' @importFrom cli cli_alert_danger cli_alert_success
 #' @export
-print.rawBase <- function(rawBase, ...) {
-  dbName = .getDatabaseName(rawBase)
-  dataRAW = as.data.frame(rawBase$dataRAW)
-  cat("Project .........:",paste(rawBase$project_name,collapse=" :: "),"\n")
-  cat("Package .........:",rawBase$package_name,"\n")
-  cat("RAW paths .......:",paste(rawBase$raw_paths,collapse=" :: "),"\n")
-  cat("Project names ...:",unique(rawBase$import_history$project),"\n")
-  cat("SQL paths .......:",paste(rawBase$sql_paths,collapse=" :: "),"\n")
+print.rawBase <- function(x, ...) {
+  dbName = .getDatabaseName(x)
+  dataRAW = as.data.frame(x$dataRAW)
+  cat("Project .........:",paste(x$project_name,collapse=" :: "),"\n")
+  cat("Package .........:",x$package_name,"\n")
+  cat("RAW paths .......:",paste(x$raw_paths,collapse=" :: "),"\n")
+  cat("Project names ...:",unique(x$import_history$project),"\n")
+  cat("SQL paths .......:",paste(x$sql_paths,collapse=" :: "),"\n")
   cat("SQL database ....:",dbName,"\n")
-  cat("Instruments .....:",paste(names(rawBase$instruments), collapse=", "),"\n")
-  cat("RAW data files ..:",nrow(dataRAW)," (",length(which(rawBase$dataRAW$missing==TRUE)),"missing)\n")
-  cat("Extensions ......:",paste0(rawBase$extensions, collapse = ", "),"\n")
+  cat("Instruments .....:",paste(names(x$instruments), collapse=", "),"\n")
+  cat("RAW data files ..:",nrow(dataRAW)," (",length(which(x$dataRAW$missing==TRUE)),"missing)\n")
+  cat("Extensions ......:",paste0(x$extensions, collapse = ", "),"\n")
 
-  if (file.exists(raw.getDatabase(rawBase))) {
-    cli::cli_alert_success("Success finding SQL database.")
-  } else {
-    cli::cli_alert_danger("Failed finding SQL database.")
-    cli::cli_alert_info("Use raw.addSQLpath(rawBase, p) to add local path p for DB")
+  if (interactive()) {
+    if (file.exists(raw.getDatabase(x))) {
+      cli::cli_alert_success("Success finding SQL database.")
+    } else {
+      cli::cli_alert_danger("Failed finding SQL database.")
+      cli::cli_alert_info("Use raw.addSQLpath(rawBase, p) to add local path p for DB")
+    }
   }
 }
 
@@ -133,9 +144,26 @@ similar_rawBaseHistory <- function(rh_vec, rh_new) {
   matchFound
 }
 
-# check of whether the rawBase is valid
+#' Check whether an object is a valid rawBase object
+#'
+#' Validates that the supplied object inherits from class `"rawBase"`.
+#' If the object is not a `rawBase` object, the function throws an error.
+#'
+#' @param rawBase An object to validate.
+#'
+#' @return Invisibly returns `rawBase` if valid. Throws an error otherwise.
+#'
+#' @examples
+#' \dontrun{
+#' check_rawBase(x)
+#' }
+#'
 #' @importFrom cli cli_abort
-#' @noRd
+#' @export
 check_rawBase <- function(rawBase) {
-  if (!is(rawBase,"rawBase")) cli_abort("rawBase object required.")
+  if (!is(rawBase, "rawBase")) {
+    cat("rawBase object required.")
+  }
+
+  invisible(rawBase)
 }

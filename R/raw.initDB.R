@@ -23,7 +23,9 @@ raw.initDB <- function(rawBase, quiet=FALSE) {
   check_rawBase(rawBase) # make sure, it is a valid object
 
   if (sql_database_exists(rawBase)) {
-    if (!quiet) cli_inform("SQL database already exists; no new database generated, trying to update version.")
+    if (interactive()) {
+      cli_inform("SQL database already exists; no new database generated, trying to update version.")
+    }
     # if needed, update the version in the name of the database.
     update_databaseName(rawBase, quiet=quiet)
     return(rawBase)
@@ -67,7 +69,7 @@ update_databaseName <- function(rawBase, quiet=FALSE) {
     if(!quiet) cli_inform(paste("Old database:", dbOldVersion))
     if(!quiet) cli_inform(paste("Updating to new version:", dbNewVersion))
   } else {
-    if(!quiet) cli_inform(paste("Already on latest database:", dbNewVersion))
+    # if(!quiet) cli_inform(paste("Already on latest database:", dbNewVersion))
   }
 }
 
@@ -141,6 +143,7 @@ get_newSQLname <- function(rawBase) {
 }
 
 #' Prints the history of the SQLite database
+#' @param rawBase rawBase class
 #' @importFrom DBI dbConnect dbDisconnect
 #' @importFrom RSQLite SQLite
 #' @export

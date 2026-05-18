@@ -1,6 +1,6 @@
 #' Check missing files
 #'
-#' @param dataRAW dataRAW S3 object with files
+#' @param rawBase rawBase object
 #' @returns dataRAW object with updated missing fields
 #'
 #' @export

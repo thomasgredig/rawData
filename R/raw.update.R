@@ -11,6 +11,7 @@
 #' @param sqlPath any SQL path to be added
 #' @param recursive logical, recursive search in path
 #' @param instrument_list list, contains instruments to be added
+#' @param extensions additional file extensions; i.e. asc or rasx
 #' @param forceUpdateMissing if TRUE, all missing files are checked for folder update, useful for legacy RAWID files
 #' @param quiet suppresses messages
 #'
@@ -83,7 +84,7 @@ raw.update <- function(
   rawBase = raw.updateInstrument(rawBase, quiet=quiet)
 
   # Persist updated object ---------------------------------------------------
-  ui_silence(
+  usethis::ui_silence(
     usethis::use_data(rawBase, overwrite = TRUE)
   )
 
@@ -101,7 +102,7 @@ raw.update <- function(
 #' it will be updated, but not added; the ID remains the same.
 #'
 #' @param rawBase see raw.init() to create this
-
+#' @param file_pattern string to search for extra files
 #' @param verbose logical to output more information
 #'
 #' @importFrom cli cli_alert_warning
@@ -120,9 +121,11 @@ raw.addFiles <- function(rawBase, file_pattern, verbose=FALSE) {
 
   # Quit if no files are found.
   if (length(fList)==0) {
-    cli_alert_warning("No RAW data files are found in these folders.")
-    cli_alert_warning("Check file naming conventions.")
-    cli_alert_warning("File names must include project name: _",rawBase$project_name,"_")
+    if (interactive()) {
+      cli_alert_warning("No RAW data files are found in these folders.")
+      cli_alert_warning("Check file naming conventions.")
+      cli_alert_warning(paste("File names must include project name: _",rawBase$project_name,"_"))
+    }
     return(rawBase)
   }
 
@@ -178,6 +181,8 @@ raw.addFiles <- function(rawBase, file_pattern, verbose=FALSE) {
 
 #' Returns File Type
 #' @importFrom tools file_ext
+#' @param filename filename with type extension
+#' @noRd
 .getFileType <- function(filename) {
   type = ""
   f = basename(filename)
@@ -219,7 +224,8 @@ raw.addFiles <- function(rawBase, file_pattern, verbose=FALSE) {
   d
 }
 
-# provides error if rawBase is not in the correct format
+#' provides error if rawBase is not in the correct format
+#' @noRd
 check_rawBase <-function(rawBase) {
   if(!inherits(rawBase,"rawBase")) {
     stop("Requires a rawBase object.")

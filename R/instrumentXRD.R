@@ -50,9 +50,10 @@ instrumentXRD <- function(rawBase) {
 
   dataXRD = r_xrd
 
-  ui_silence(
+  if (interactive()) {
+  usethis::ui_silence(
     use_data(dataXRD, overwrite=TRUE)
-  )
+  )}
 
   rawBase
 }

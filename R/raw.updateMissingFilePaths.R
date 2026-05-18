@@ -57,7 +57,7 @@ raw.updateMissingFilePaths <- function(rawBase) {
     # update the missing files
     rawBase <- raw.checkMissing(rawBase)
   } else {
-    cli_inform("No missing files, so no update.")
+    cat("No missing files, so no update.")
   }
 
   rawBase

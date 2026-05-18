@@ -1,3 +1,7 @@
+# rawData 0.2.17
+
+* add dependencies and fix S3 issues from `devtools::check()`
+
 # rawData 0.2.16
 
 * add `raw.xrdInfo()` to read RASX files
@@ -74,4 +78,4 @@
 
 # rawData 0.1.0
 
-* Initial concept based on RAWdataR
+* Initial concept based on defunct RAWdataR package

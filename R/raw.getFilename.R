@@ -1,5 +1,5 @@
 #' Full Path and Filename for dataRAW object
-#' @param dataRAW dataRAW object
+#' @param rawBase rawBase class
 #' @param ID dataRAW object ID
 #' @returns full path of filename, if not founds returns empty NA
 #' @export

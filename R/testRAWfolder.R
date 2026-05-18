@@ -1,7 +1,7 @@
 #' Create a Test RAW folder with text data files
 #' @param n number of files
 #' @param projectName string for name of the project
-#' @param returns folder with temporary files
+#' @param recreate true or false
 #' @importFrom stats runif
 #' @examples
 #' dir(get_test_RAW_folder(2,"spinPc"))

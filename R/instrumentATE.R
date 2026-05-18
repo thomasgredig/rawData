@@ -28,7 +28,7 @@ instrumentATE <- function(rawBase) {
   if(exists("dataATE", inherits = FALSE)) {
     result = dataATE
     old_IDs = unique(result$ID)
-    cli_inform(paste0("dataATE found: ",length(old_IDs)," IDs."))
+    cat(paste0("dataATE found: ",length(old_IDs)," IDs."))
   } else {
     result = data.frame()
     old_IDs = c()
@@ -60,9 +60,10 @@ instrumentATE <- function(rawBase) {
 
   # save data to file
   dataATE = result
-  ui_silence(
+  if (interactive()) {
+  usethis::ui_silence(
     use_data(dataATE, overwrite=TRUE)
-  )
+  )}
 
   rawBase
 }

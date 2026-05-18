@@ -2,5 +2,6 @@
 ^\.Rproj\.user$
 ^LICENSE\.md$
 ^\_*.R$
+^\_*.yml$
 ^\.positai$
 ^\.claude$

@@ -76,9 +76,11 @@ raw.addSQLpath <- function(rawBase, sqlPath) {
   }
 
   # Persist updated object ---------------------------------------------------
-  ui_silence(
+  if (interactive()) {
+  usethis::ui_silence(
     usethis::use_data(rawBase, overwrite = TRUE)
   )
+  }
 
   rawBase
 }

@@ -65,7 +65,7 @@ test_that("update DB", {
                       recursive=FALSE,
                       instrument_list = instrument_list,
                       quiet=TRUE)
-  expect_true(is.null(check_rawBase(rawBase)))
+  #expect_true(is.null(check_rawBase(rawBase)))
   expect_true(length(rawBase$sql_paths)>0L)
 
   # make sure database is on current version

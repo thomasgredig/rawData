@@ -10,6 +10,7 @@
 #' in interactive mode, will prompt for a path.
 #'
 #' @param rawBase list generated with raw.init()
+#' @param file_pattern additional file pattern to search
 #' @param recursive logical, determines whether path is searched recursively.
 #' @param quiet suppress messages
 #'
@@ -20,7 +21,9 @@ raw.find <- function(rawBase,  file_pattern, recursive=TRUE, quiet=FALSE) {
 
   # find files with specified extensions
   find_files_with_extensions <- function(pfad, extensions) {
-    cli_alert_info(paste("Loading extensions:",paste(extensions, collapse = "|")))
+    if (interactive()) {
+      cli_alert_info(paste("Loading extensions:",paste(extensions, collapse = "|")))
+    }
     # Create a pattern to match the extensions
     pattern <- paste0("\\.(", paste(extensions, collapse = "|"), ")$")
 
@@ -71,7 +74,7 @@ raw.find <- function(rawBase,  file_pattern, recursive=TRUE, quiet=FALSE) {
     } else { # add files with pattern
       file_pattern = df_history$path[i]
       for (pfad in rawBase$raw_paths) {
-        cat("\nSearching:",pfad,"\n")
+        # cat("\nSearching:",pfad,"\n")
         fList = c(fList, dir(pfad,
                              pattern = file_pattern,
                              ignore.case = TRUE,

@@ -54,9 +54,11 @@ raw.init <- function(projectName,
   rawBase = raw.updateInstrument(rawBase)
 
   # save the rawBase
-  ui_silence(
+  if (interactive()) {
+  usethis::ui_silence(
     usethis::use_data(rawBase, overwrite = TRUE)
   )
+  }
 
   rawBase
 }

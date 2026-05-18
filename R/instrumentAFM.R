@@ -29,7 +29,7 @@ instrumentAFM <- function(rawBase) {
   if(exists("dataFilesAFM")) {
     result = dataFilesAFM
     old_IDs = unique(result$ID)
-    cli_inform(paste0("dataFilesAFM found: ",length(old_IDs)," IDs."))
+    cat(paste0("dataFilesAFM found: ",length(old_IDs)," IDs."))
   } else {
     result = data.frame()
     old_IDs = c()
@@ -99,9 +99,11 @@ instrumentAFM <- function(rawBase) {
   #   dataFilesAFM <- bind_rows(dataFilesAFM, result) %>%
   #     distinct(ID, .keep_all = TRUE, .fromLast = TRUE)
   # }
-  ui_silence(
+  if (interactive()) {
+  usethis::ui_silence(
     use_data(dataFilesAFM, overwrite=TRUE)
   )
+  }
 
   rawBase
 }
